@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+#from ecgsproject.admin import employeadmin, intadmin
+
+""" admin.site.site_header = 'Administration générale de EcoGreenSoft' """
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #path('employeadmin/', employeadmin.urls),
+    #path('intadmin/', intadmin.urls),
     path('', include('ecgsproject.urls'))
 ]

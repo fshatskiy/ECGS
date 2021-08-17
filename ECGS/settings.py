@@ -82,7 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ecgs_test',
-        'HOST': os.environ.get('DB_HOST'),
+        'HOST': os.environ.get('DB_HOST'),#voir pour l'hebergement
         'PORT': os.environ.get('DB_PORT'),
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),

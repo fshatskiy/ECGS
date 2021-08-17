@@ -1,9 +1,10 @@
+from django.contrib.auth.models import User
 from django.db import models
 import uuid
 
 # Create your models here.
 
-
+#intégrer Personne avec utilisateurs directs afin qu'ils soient de la même instance que les personnes créées sur le site admin
 class Personne(models.Model):
     id_personne = models.UUIDField(default=uuid.uuid4, 
                                    unique=True, 
@@ -17,8 +18,9 @@ class Personne(models.Model):
     fonction = models.CharField(max_length=200)
     date_creation = models.DateTimeField(auto_now_add=True)
     
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.nom)
+
     
 class Integrateur(models.Model):
     id_integrateur = models.UUIDField(default=uuid.uuid4, 
@@ -29,11 +31,12 @@ class Integrateur(models.Model):
                                     on_delete=models.CASCADE,
                                     unique=True)
     adr_entreprise = models.CharField(max_length=250)
-    tva = models.CharField(max_length=14)#international
+    tva = models.CharField(max_length=14, unique=True)#international, unique
     lieu_fonction = models.CharField(max_length=250)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
     
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.id_personne)
     
 class Employe(models.Model):
     id_employe = models.UUIDField(default=uuid.uuid4, 
@@ -46,20 +49,22 @@ class Employe(models.Model):
     id_integrateur = models.ForeignKey(Integrateur, 
                                 on_delete=models.CASCADE)
     lieu_fonction = models.CharField(max_length=250)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
         
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.id_personne)
         
-class Resultat(models.Model):
+""" class Resultat(models.Model):
     id_resultat = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
-                                editable=False)
+                                editable=False
+                                )
     nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
     utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
     date = models.DateTimeField(auto_now_add=True)#test
     
-    """ def __str__(self):
+    def __str__(self):
         return self.title """
     
 class Client(models.Model):
@@ -72,16 +77,17 @@ class Client(models.Model):
                                 unique=True)
     id_employe = models.ForeignKey(Employe, 
                                 on_delete=models.CASCADE)
-    id_resultat = models.ForeignKey(Resultat,
-                                on_delete=models.CASCADE)
+    """ id_resultat = models.ForeignKey(Resultat,
+                                on_delete=models.CASCADE) """
     adr_entreprise = models.CharField(max_length=250)
-    num_contrat = models.PositiveIntegerField(null=True, blank=True)
-    num_licence = models.PositiveIntegerField(null=True, blank=True)
+    num_contrat = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
+    num_licence = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
+    #author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user : montre aussi son créateur
     
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.id_personne)
         
-class Ticket(models.Model):
+""" class Ticket(models.Model):
     STATUT = (
         ('Ouvert', 'Ouvert'),
         ('En attente', 'En attente'),
@@ -97,8 +103,8 @@ class Ticket(models.Model):
     commentaire = models.TextField(blank=True, null=True)
     statut = models.CharField(max_length=200, choices=STATUT)
 
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.titre)
         
         
 class Detail_Ticket(models.Model):
@@ -110,8 +116,8 @@ class Detail_Ticket(models.Model):
                                 on_delete=models.SET_NULL)
     date_creation = models.DateTimeField(auto_now_add=True)
     
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.id_ticket)
         
 class Rep_Ticket(models.Model):
     id_rep_ticket = models.UUIDField(default=uuid.uuid4, 
@@ -125,8 +131,8 @@ class Rep_Ticket(models.Model):
     date = models.DateField(auto_now_add=True)
     resolu_par = models.CharField(max_length=200)#reprendre les noms depuis la bd ?
     
-    """ def __str__(self):
-        return self.title """
+    def __str__(self):
+        return str(self.id_ticket)
 
 class Contrat(models.Model):
     id_contrat = models.UUIDField(default=uuid.uuid4, 
@@ -138,9 +144,9 @@ class Contrat(models.Model):
                                     unique=True)#pls contrats possibles par client ?
     date_ctr = models.DateField()
         
-    """ def __str__(self):
-        return self.title """
-        
+    def __str__(self):
+        return str(self.id_client) 
+    
 class Licence(models.Model):
     id_licence = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
@@ -149,3 +155,6 @@ class Licence(models.Model):
     id_contrat = models.ForeignKey(Contrat,
                                 on_delete=models.CASCADE)
     date_lic = models.DateField()
+    
+    def __str__(self):
+        return str(self.id_contrat) """
