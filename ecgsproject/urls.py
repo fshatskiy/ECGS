@@ -1,13 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-""" admin.site.site_header = 'Administration générale de EcoGreenSoft' """
+from ecgsproject.views import CustomLoginView
 
-""" from ecgsproject.admin import employeadmin, intadmin """
+admin.site.site_header = 'Administration générale de EcoGreenSoft'
 # ajouter l'accueil
 
-urlpatterns = [
-    path('', views.accueil)
-]
+#app_name = "ecgsproject"
 
-""" path('employeadmin/', include('employeadmin.urls')), """
+urlpatterns = [ 
+    path('', views.accueil, name='accueil'),
+    path('register/', views.register_page, name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    #path('logout/', views.CustomLogoutForm, name='logout'),
+]

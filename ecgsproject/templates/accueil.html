@@ -8,9 +8,13 @@
 </head>
 <body>
     {% include 'navbar.html' %}
-    <p>Hello</p>
-    {% block content %}
 
-    {% endblock content %}
+    {% if request.user.is_authenticated %}
+        <p>Bienvenue {{request.user}}</p>
+        <a href=''>Logout</a>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+ 
 </body>
 </html>

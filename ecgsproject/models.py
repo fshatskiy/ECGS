@@ -12,11 +12,12 @@ class Personne(models.Model):
                                    editable=False)
     nom = models.CharField(max_length=200)
     prenom = models.CharField(max_length=200)
-    mail = models.EmailField(max_length=200)
+    mail = models.EmailField(max_length=200, unique=True)
     tel = models.CharField(max_length=20)
     entreprise = models.CharField(max_length=200)
     fonction = models.CharField(max_length=200)
     date_creation = models.DateTimeField(auto_now_add=True)
+    createur = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
     
     def __str__(self):
         return str(self.nom)
@@ -33,7 +34,7 @@ class Integrateur(models.Model):
     adr_entreprise = models.CharField(max_length=250)
     tva = models.CharField(max_length=14, unique=True)#international, unique
     lieu_fonction = models.CharField(max_length=250)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
+    #author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
     
     def __str__(self):
         return str(self.id_personne)
@@ -49,7 +50,7 @@ class Employe(models.Model):
     id_integrateur = models.ForeignKey(Integrateur, 
                                 on_delete=models.CASCADE)
     lieu_fonction = models.CharField(max_length=250)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
+    createur = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
         
     def __str__(self):
         return str(self.id_personne)
@@ -68,6 +69,10 @@ class Employe(models.Model):
         return self.title """
     
 class Client(models.Model):
+    INTERET = (
+        ('Interessé', 'Interessé'),
+        ('Abonné', 'Abonné'),
+    )
     id_client = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
@@ -82,7 +87,8 @@ class Client(models.Model):
     adr_entreprise = models.CharField(max_length=250)
     num_contrat = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
     num_licence = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
-    #author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user : montre aussi son créateur
+    statut = models.CharField(max_length=200, choices=INTERET)#------------------------------------------- A MAJ
+    createur = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
     
     def __str__(self):
         return str(self.id_personne)
