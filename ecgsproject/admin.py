@@ -71,7 +71,7 @@ class EmployeAdmin(admin.ModelAdmin):
         print(Employe.objects.filter(createur=request.user))
         return Employe.objects.filter(createur=request.user)
     
-    #ForeignKey drop list1
+    #ForeignKey drop list
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "id_personne":
             kwargs["queryset"] = Personne.objects.filter(createur=request.user)
@@ -92,10 +92,17 @@ class ClientAdmin(admin.ModelAdmin):
         obj.save()
     
     def get_queryset(self, request):
+        queryset = super(ClientAdmin, self).get_queryset(request)
         if request.user.is_superuser:
-            return Client.objects.all()
+            return queryset
         print(Client.objects.filter(createur=request.user))
         return Client.objects.filter(createur=request.user)
+    
+    #ForeignKey drop list
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "id_personne":
+            kwargs["queryset"] = Personne.objects.filter(createur=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
 
         
