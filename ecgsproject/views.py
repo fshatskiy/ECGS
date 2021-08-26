@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserForm
 from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
@@ -23,13 +24,9 @@ from django.contrib import messages
     context = {}
     return render(request, 'login.html', context) """
     
-""" def customLoginView(LoginView):
-    template_name = "login.html"
-    fields = '__all__'
-    redirect_authenticated_user = True
-    
-    def get_success_url(self):
-        return reverse_lazy('accueil') """
+
+def accueil(request):
+    return render(request, 'accueil.html')
 
 
 class CustomLoginView(LoginView):
@@ -39,14 +36,6 @@ class CustomLoginView(LoginView):
     
     def get_success_url(self):
         return reverse_lazy('accueil')
-
-def logout_page(request):
-    logout(request)
-    return redirect('accueil.html')
-
-
-def accueil(request):
-    return render(request, 'accueil.html')
 
 
 #ajouter fonction du mail
