@@ -1,7 +1,12 @@
 <h1>Login</h1>
-
-<form method="POST">
+<!-- {% if form.errors %}
+    <p>Veuillez saisir un nom d'utilisateur et un mot de passe corrects.</p>
+{% endif %} -->
+<form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
     {{form.as_p}}
     <input type="submit" value="Login">
 </form>
+Pas encore de compte ?
+    <a href="{% url 'register' %}">Créer un compte</a>
+    <a href="{% url 'reset_password' %}">Mot de passe oublié</a>

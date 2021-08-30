@@ -1,7 +1,7 @@
 {% load static %}
 
 <!-- Ajouter tous les chalos nécessaires pour l'inscription de l'integrateur -->
-<link rel="stylesheet"  href="{% static 'css/register.css' %}">
+<!-- <link rel="stylesheet"  href="{% static 'css/register.css' %}">
 
 <div class="register-page">
 
@@ -15,10 +15,17 @@
         {{form.password1}}
         <h4>{{form.password2.label}}</h4>
         {{form.password2}}
-        <button type="submit"> Créer un utilisateur </button>
+        <button type="submit"> Créer un compte </button>
         <p class="message">Déjà enregistré ? <a href="{% url 'login' %}">Connectez-vous</a></p>
         </form>
-        {{ form.errors }}
-    </div>
+        <!-- Régler les messages d'erreur -->
+        <!-- {{ form.errors }} -->
+<!--     </div>
 
-  </div>
+  </div> -->
+
+  <form method="POST" action="{% url 'register' %}">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Créer un compte">
+</form>
