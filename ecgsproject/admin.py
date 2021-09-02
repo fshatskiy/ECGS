@@ -20,7 +20,8 @@ class CustomUserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
         )
-    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    exclude = ('createur', )
+    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'createur')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     
@@ -39,15 +40,19 @@ class CustomUserAdmin(DjangoUserAdmin):
                 (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
                 (_('Permissions'), {'fields': perm_fields}),
                 (_('Important dates'), {'fields': ('last_login', 'date_joined')})]
-
-
-
-
-
-
-
-
-
+    
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.createur = request.user
+        obj.save()
+    
+    #ces deux fonctions permettent à l'utilisateur de voir uniquement les utilisateurs créés par lui même    
+    def get_queryset(self, request):
+        queryset = super(CustomUserAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return queryset
+        print(CustomUser.objects.filter(createur=request.user))
+        return CustomUser.objects.filter(createur=request.user)
 
 
 
@@ -107,7 +112,8 @@ class PersonneAdmin(admin.ModelAdmin):
         if not change:
             obj.createur = request.user
         obj.save()
-        
+    
+    # permet à l'utilisateur de voir uniquement les personnes qu'il a créées
     def get_queryset(self, request):
         if request.user.is_superuser:
             return Personne.objects.all()
@@ -125,6 +131,7 @@ class EmployeAdmin(admin.ModelAdmin):
             obj.createur = request.user
         obj.save()
         
+    # permet à l'utilisateur de voir uniquement les personnes qu'il a  créées
     def get_queryset(self, request):
         queryset = super(EmployeAdmin, self).get_queryset(request)
         if request.user.is_superuser:
@@ -154,6 +161,7 @@ class ClientAdmin(admin.ModelAdmin):
             obj.createur = request.user
         obj.save()
     
+    # permet à l'utilisateur de voir uniquement les personnes qu'il a  créées
     def get_queryset(self, request):
         queryset = super(ClientAdmin, self).get_queryset(request)
         if request.user.is_superuser:

@@ -50,6 +50,7 @@ class CustomUser(AbstractUser):
 
     username = None
     email = models.EmailField(_('email address'), unique=True)
+    createur = models.ForeignKey('self', max_length=200, on_delete=models.CASCADE)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -89,7 +90,6 @@ class Integrateur(models.Model):
     adr_entreprise = models.CharField(max_length=250)
     tva = models.CharField(max_length=14, unique=True)#international, unique
     lieu_fonction = models.CharField(max_length=250)
-    #author = models.ForeignKey(User, on_delete=models.CASCADE)# for request.user
     
     def __str__(self):
         return str(self.id_personne)
