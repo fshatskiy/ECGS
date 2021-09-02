@@ -102,7 +102,7 @@ class Employe(models.Model):
     id_personne = models.OneToOneField(Personne, 
                                 on_delete=models.CASCADE,
                                 unique=True)
-    id_integrateur = models.ForeignKey(Integrateur, 
+    id_integrateur = models.ForeignKey(Integrateur, null=True, blank=True,
                                 on_delete=models.CASCADE)
     lieu_fonction = models.CharField(max_length=250)
     createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# for request.user

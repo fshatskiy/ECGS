@@ -103,6 +103,7 @@ def nom_client(obj):
 
 class IntegrateurAdmin(admin.ModelAdmin):    
     list_display = (nom_int, int_entr, 'adr_entreprise', 'tva', 'lieu_fonction')     
+    
 
 @admin.register(Personne)
 class PersonneAdmin(admin.ModelAdmin):
@@ -123,8 +124,8 @@ class PersonneAdmin(admin.ModelAdmin):
 
 @admin.register(Employe)
 class EmployeAdmin(admin.ModelAdmin):
-    exclude = ('createur',)#to not be able to change it manually
-    list_display = (nom_empl, 'id_integrateur', empl_entr, 'lieu_fonction', 'createur')
+    exclude = ('id_integrateur', 'createur',)#to not be able to change it manually
+    list_display = (nom_empl, empl_entr, 'lieu_fonction', 'createur')
     
     def save_model(self, request, obj, form, change):
         if not change:
@@ -136,15 +137,13 @@ class EmployeAdmin(admin.ModelAdmin):
         queryset = super(EmployeAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return queryset
-        """ if request.user.is_superuser:
-            return Employe.objects.all() """
         print(Employe.objects.filter(createur=request.user))
         return Employe.objects.filter(createur=request.user)
     
     #ForeignKey drop list
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "id_personne":
-            kwargs["queryset"] = Personne.objects.filter(createur=request.user)
+            kwargs["queryset"] = Personne.objects.filter(createur=request.user)#employe createur
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
     
