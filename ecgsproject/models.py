@@ -73,7 +73,7 @@ class Personne(models.Model):
     entreprise = models.CharField(max_length=200)
     fonction = models.CharField(max_length=200)
     date_creation = models.DateTimeField(auto_now_add=True)
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# for request.user
+    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# SUPPRIMER
     
     def __str__(self):
         return str(self.nom)
@@ -105,7 +105,7 @@ class Employe(models.Model):
     id_integrateur = models.ForeignKey(Integrateur, null=True, blank=True,
                                 on_delete=models.CASCADE)
     lieu_fonction = models.CharField(max_length=250)
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# for request.user
+    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# CHANGER DE NOM
         
     def __str__(self):
         return str(self.id_personne)
@@ -147,7 +147,7 @@ class Client(models.Model):
     num_contrat = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
     num_licence = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
     statut = models.CharField(max_length=200, choices=INTERET)#------------------------------------------- A MAJ
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# for request.user
+    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)#CHANGER DE NOM
     
     def __str__(self):
         return str(self.id_personne)

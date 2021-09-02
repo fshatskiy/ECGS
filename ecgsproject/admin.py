@@ -89,7 +89,7 @@ class IntegrateurAdmin(admin.ModelAdmin):
     list_display = (nom_int, int_entr, 'adr_entreprise', 'tva', 'lieu_fonction')
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['id_personne__lieu_fonction']
+            return ['id_personne__date_creation']
         else:
             return []
         
