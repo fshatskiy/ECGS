@@ -1,39 +1,28 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from .models import CustomUser
 from django.template.loader import render_to_string
-from django.db.models.query_utils import Q
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.forms import UserCreationForm
-from .forms import CustomUserForm
+from django.db.models.query_utils import Q
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import RegisterForm
 
+UserModel = get_user_model()
 # Create your views here.
-
-""" def login_page(request):
-    if request.method == "POST":
-            # your sign in logic goes here
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return redirect('accueil')
-            else:
-                messages.info(request, 'Adresse email ou mot de passe incorrect')
-
-    context = {}
-    return render(request, 'login.html', context) """
-    
 
 def accueil(request):
     return render(request, 'accueil.html')
@@ -44,33 +33,73 @@ class CustomLoginView(LoginView):
     fields = '__all__'
     redirect_authenticated_user = True
     
+    #def user_is_active(self, user):
+    """ if user.is_active:
+            messages.success('Votre compte a bien été activé.')
+        else:
+            messages.warning('Votre compte n\'a pas encore été approuvé par l\'administrateur du site.')
+        return reverse_lazy('accueil') """
+        
     def get_success_url(self):
         return reverse_lazy('accueil')
 
-class RegisterPage(FormView):
-    template_name = 'register.html'
-    #plus tard mettre CustomUserForm
-    form_class = UserCreationForm
-    redirect_authenticated_user = True
-    success_url = reverse_lazy('accueil')
-    
-    def form_valid(self, form):
-        user = form.save()
-        if user is not None:
-            login(self.request, user)
-        return super(RegisterPage, self).form_valid(form)
+# ajouter les check necessaires : if not empty, doesn't exist...
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect('accueil')
+    if request.method == 'GET':
+        return render(request, 'register.html')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data['email']#check if the email address already exists
+            associated_users = CustomUser.objects.filter(Q(email=data))
+            if associated_users.exists():
+                messages.error(request, 'Cette adresse email a déjà été utilisée.')
+                return redirect('register')
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activation de votre compte.'
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            #check
+            messages.success(request, 'Veuillez confirmer votre adresse email afin de terminer l\'inscription')
+            return redirect('accueil')
+        messages.error(request, "Les informations sont invalides")
+        return redirect('register')
+    else:
+        form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
+
+
+#activation du nouveau compte via le lien de vérification
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = UserModel._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.email_confirmed=True
+        user.save()
+        messages.success(request, 'Votre compte a bien été vérifié. Veuillez maintenant vérifier si l\'administrateur a activé votre compte en vous y connectant.')
+        return redirect('accueil')
+    else:
+        messages.error(request, 'Le lien d\'activation n\'est plus valide ! Veuillez vous réinscrire')
+        return redirect('accueil')
             
 
-""" def register_page(request):
-    if request.method != 'POST':
-        form = CustomUserForm()#render empty form
-    else:
-        form = CustomUserForm(request.POST)#hold the data being submitted by the user
-        if form.is_valid():
-            form.save()
-            return redirect('accueil')#renvoie la personne vers la page accueil après l'enregistrement
 
-    context = {'form': form}
-
-    return render(request, 'register.html', context) """
     

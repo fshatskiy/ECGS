@@ -1,31 +1,40 @@
 {% load static %}
-
-<!-- Ajouter tous les chalos nécessaires pour l'inscription de l'integrateur -->
-<!-- <link rel="stylesheet"  href="{% static 'css/register.css' %}">
-
-<div class="register-page">
-
-    <div class="form">
-      <form class="register-form" method="POST" action="">
-        {% csrf_token %}
-        <h2 class="register-title">REGISTER</h3>
-        <h4>{{form.email.label}}</h4>
-        {{form.email}}
-        <h4>{{form.password1.label}}</h4>
-        {{form.password1}}
-        <h4>{{form.password2.label}}</h4>
-        {{form.password2}}
-        <button type="submit"> Créer un compte </button>
-        <p class="message">Déjà enregistré ? <a href="{% url 'login' %}">Connectez-vous</a></p>
-        </form>
-        <!-- Régler les messages d'erreur -->
-        <!-- {{ form.errors }} -->
-<!--     </div>
-
-  </div> -->
-
-  <form method="POST" action="{% url 'register' %}">
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Créer un compte">
-</form>
+<!DOCTYPE html>  
+    <html lang="en">  
+    <head>  
+        <title>Signup</title>  
+        <meta charset="utf-8">  
+        <meta name="viewport" content="width=device-width, initial-scale=1">  
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>  
+    <body>
+        {% include 'messages.html' %}
+        {% include 'navbar.html' %} 
+        <div class="container" style="margin-top: 50px;">  
+        <div class="row justify-content-center">  
+            <div class="col-md-5 shadow-sm p-3 mb-5 bg-white rounded">  
+                <h2>Inscription</h2>  
+                <form method="post">  
+                    {% csrf_token %}
+                    <div class="form-group">  
+                        <label for="email">Adresse email :</label>  
+                        <input type="email" class="form-control" id="email"  name="email">  
+                    </div>  
+                    <div class="form-group">  
+                        <label for="pwd1">Mot de passe :</label>  
+                        <input type="password" class="form-control" id="pwd1"  name="password1">  
+                    </div>  
+                    <div class="form-group">  
+                        <label for="pwd2">Confirmez le mot de passe :</label>  
+                        <input type="password" class="form-control" id="pwd2"  name="password2">  
+                    </div>
+                    <!-- A AJOUTER LE RESTE -->
+                    <button type="submit" class="btn btn-primary">Envoyer</button>  
+                </form>  
+            </div>  
+        </div>  
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>  
+</html>

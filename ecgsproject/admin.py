@@ -1,12 +1,46 @@
 from django.contrib import admin
 from .models import Personne, Integrateur, Employe, Client
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.utils.translation import ugettext_lazy as _
+from .models import CustomUser
 # Register your models here.
 
 
 #je crois que je devrais ajouter des autorisations pour cette page car je ne peux rien y voir, sauf lorsque
 #je vais encore sur /admin/
+
+
+
+# new custom user
+@admin.register(CustomUser)
+class CustomUserAdmin(DjangoUserAdmin):
+    """Define admin model for custom User model with no email field."""
+
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2'),
+        }),
+    )
+    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
+
+
+
+
+
+
+
+
+
 
 
 #custom colonnes
@@ -31,6 +65,27 @@ def nom_client(obj):
     return "%s %s"%(obj.id_personne.nom, obj.id_personne.prenom)
 
 
+""" class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("username",)# à changer
+    model = Profile
+
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+
+        return Profile.objects.filter(created_by=request.user) or qs.none()
+
+
+
+    def save_model(self, request, obj, form, change):
+        if change:
+            obj.modified_by = request.user
+        else:
+            obj.created_by = request.user
+
+        obj.save() """
 
 
 class IntegrateurAdmin(admin.ModelAdmin):    
