@@ -14,24 +14,32 @@ from .models import CustomUser
 # new custom user
 @admin.register(CustomUser)
 class CustomUserAdmin(DjangoUserAdmin):
-    """Define admin model for custom User model with no email field."""
-
-    fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-    )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'password1', 'password2'),
         }),
-    )
+        )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+    
+    # permet de cacher à tous les utilisateurs sauf admin, la boxcase de "is superuser"
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        
+        if request.user.is_superuser:
+            perm_fields = ('is_active', 'is_staff', 'is_superuser',
+                           'groups', 'user_permissions')
+        else:
+            perm_fields = ('is_active', 'is_staff')
+            
+        return [(None, {'fields': ('email', 'password')}),
+                (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+                (_('Permissions'), {'fields': perm_fields}),
+                (_('Important dates'), {'fields': ('last_login', 'date_joined')})]
+
 
 
 
