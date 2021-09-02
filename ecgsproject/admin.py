@@ -53,6 +53,12 @@ class CustomUserAdmin(DjangoUserAdmin):
             return queryset
         print(CustomUser.objects.filter(createur=request.user))
         return CustomUser.objects.filter(createur=request.user)
+    
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['customuser__createur', 'is_active', 'is_staff', 'is_superuser']
+        else:
+            return ['is_active', 'is_staff']
 
 
 
@@ -78,31 +84,20 @@ def nom_client(obj):
     return "%s %s"%(obj.id_personne.nom, obj.id_personne.prenom)
 
 
-""" class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("username",)# à changer
-    model = Profile
-
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-
-        return Profile.objects.filter(created_by=request.user) or qs.none()
-
-
-
-    def save_model(self, request, obj, form, change):
-        if change:
-            obj.modified_by = request.user
-        else:
-            obj.created_by = request.user
-
-        obj.save() """
-
 
 class IntegrateurAdmin(admin.ModelAdmin):    
-    list_display = (nom_int, int_entr, 'adr_entreprise', 'tva', 'lieu_fonction')     
+    list_display = (nom_int, int_entr, 'adr_entreprise', 'tva', 'lieu_fonction')
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__lieu_fonction']
+        else:
+            return []
+        
+    def get_search_fields(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction']
+        else:
+            return []
     
 
 @admin.register(Personne)
@@ -121,11 +116,18 @@ class PersonneAdmin(admin.ModelAdmin):
         print(Personne.objects.filter(createur=request.user))
         return Personne.objects.filter(createur=request.user)
     
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['entreprise', 'date_creation']
+        else:
+            return ['date_creation']
+    
 
 @admin.register(Employe)
 class EmployeAdmin(admin.ModelAdmin):
     exclude = ('id_integrateur', 'createur',)#to not be able to change it manually
     list_display = (nom_empl, empl_entr, 'lieu_fonction', 'createur')
+    
     
     def save_model(self, request, obj, form, change):
         if not change:
@@ -139,6 +141,18 @@ class EmployeAdmin(admin.ModelAdmin):
             return queryset
         print(Employe.objects.filter(createur=request.user))
         return Employe.objects.filter(createur=request.user)
+    
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__entreprise', 'id_personne__date_creation']
+        else:
+            return ['id_personne__date_creation']
+        
+    def get_search_fields(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction']
+        else:
+            return []
     
     #ForeignKey drop list
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -154,7 +168,7 @@ class ClientAdmin(admin.ModelAdmin):
     def employe(obj):
         return obj.id_employe
     list_display = (nom_client, employe, 'adr_entreprise', 'num_contrat', 'num_licence', 'statut', 'createur')
-
+    
     def save_model(self, request, obj, form, change):
         if not change:
             obj.createur = request.user
@@ -167,6 +181,18 @@ class ClientAdmin(admin.ModelAdmin):
             return queryset
         print(Client.objects.filter(createur=request.user))
         return Client.objects.filter(createur=request.user)
+    
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__entreprise', 'statut', 'createur']
+        else:
+            return ['id_personne__date_creation', 'statut']
+        
+    def get_search_fields(self, request):
+        if request.user.is_superuser:
+            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction', 'id_personne__createur', 'id_personne__date_creation']
+        else:
+            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__date_creation', 'id_personne__fonction',]
     
     #ForeignKey drop list
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
