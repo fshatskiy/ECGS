@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import Personne, Integrateur, Employe, Client
+from .models import Resultat, CustomUser, Integrateur, Employe, Client, Contrat, Contrat_detail, Licence
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
-from .models import CustomUser
 # Register your models here.
 
 
@@ -20,9 +19,9 @@ class CustomUserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
         )
-    exclude = ('createur', )
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'createur')
-    search_fields = ('email', 'first_name', 'last_name')
+    #exclude = ('id_utilisateur', )
+    list_display = ('nom', 'prenom', 'email', 'is_staff')#
+    search_fields = ('email', 'nom', 'prenom', 'tel', 'entreprise')
     ordering = ('email',)
     
     # permet de cacher à tous les utilisateurs sauf admin, la boxcase de "is superuser"
@@ -34,173 +33,183 @@ class CustomUserAdmin(DjangoUserAdmin):
             perm_fields = ('is_active', 'is_staff', 'is_superuser',
                            'groups', 'user_permissions')
         else:
-            perm_fields = ('is_active', 'is_staff')
+            perm_fields = ('is_active', 'is_staff', 'groups')
             
         return [(None, {'fields': ('email', 'password')}),
-                (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-                (_('Permissions'), {'fields': perm_fields}),
-                (_('Important dates'), {'fields': ('last_login', 'date_joined')})]
+                (_('Personal info'), {'fields': ('nom', 'prenom', 'email', 'tel', 'entreprise')}),
+                (_('Permissions'), {'fields': perm_fields})]
     
-    def save_model(self, request, obj, form, change):
+    """ def save_model(self, request, obj, form, change):
         if not change:
-            obj.createur = request.user
+            obj.id_utilisateur = request.user
         obj.save()
     
     #ces deux fonctions permettent à l'utilisateur de voir uniquement les utilisateurs créés par lui même    
     def get_queryset(self, request):
         queryset = super(CustomUserAdmin, self).get_queryset(request)
         if request.user.is_superuser:
-            return queryset
-        print(CustomUser.objects.filter(createur=request.user))
-        return CustomUser.objects.filter(createur=request.user)
+            return CustomUser.objects.all()
+        print(CustomUser.objects.filter(email=request.user))
+        return CustomUser.objects.filter(email=request.user) """
     
-    def get_list_filter(self, request):
+    """ def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['customuser__createur', 'is_active', 'is_staff', 'is_superuser']
+            return ['entreprise', 'date_joined', 'is_active', 'is_staff', 'is_superuser']#
         else:
-            return ['is_active', 'is_staff']
+            return ['date_joined', 'is_active', 'is_staff'] """
 
+#admin.site.unregister(CustomUser, CustomUserAdmin)
+#admin.site.register(CustomUser, CustomUserAdmin)
 
-
-#custom colonnes
-@admin.display(description='Nom intégrateur')
+#custom colonnes - essayer d'utiliser : Integrateur.nom
+""" @admin.display(description='Nom intégrateur')
 def nom_int(obj):
-    return "%s %s"%(obj.id_personne.nom, obj.id_personne.prenom)
+    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom)
 
 @admin.display(description='Entreprise')
 def int_entr(obj):
-    return obj.id_personne.entreprise
+    return obj.id_utilisateur.entreprise
 
 @admin.display(description='Nom employé')
 def nom_empl(obj):
-    return "%s %s"%(obj.id_personne.nom, obj.id_personne.prenom)
+    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom)
 
 @admin.display(description='Entreprise')
 def empl_entr(obj):
-    return obj.id_personne.entreprise
+    return obj.id_utilisateur.entreprise
 
 @admin.display(description='Nom client')
 def nom_client(obj):
-    return "%s %s"%(obj.id_personne.nom, obj.id_personne.prenom)
+    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom) """
 
+@admin.register(Resultat)
+@admin.register(Contrat)
+@admin.register(Contrat_detail)
+@admin.register(Licence)
+@admin.register(Integrateur)
 
 
 class IntegrateurAdmin(admin.ModelAdmin):    
-    list_display = (nom_int, int_entr, 'adr_entreprise', 'tva', 'lieu_fonction')
+    """list_display = (nom_int, int_entr, 'adr_entreprise', 'lieu_fonction')
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['id_personne__date_creation']
+            return ['id_utilisateur__date_joined']
         else:
             return []
         
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction']
+            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
         else:
-            return []
+            return [] 
+"""
+    
     
 
-@admin.register(Personne)
-class PersonneAdmin(admin.ModelAdmin):
-    exclude = ('createur',)#to not be able to change it manually
-    list_display = ('nom', 'prenom', 'mail', 'tel', 'entreprise', 'fonction', 'date_creation', 'createur')
+""" @admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    exclude = ('id_utilisateur',)#to not be able to change it manually
+    list_display = ('nom', 'prenom', 'email', 'tel', 'entreprise', 'fonction', 'date_joined', 'id_utilisateur')
     def save_model(self, request, obj, form, change):
         if not change:
-            obj.createur = request.user
+            obj.id_utilisateur = request.user
         obj.save()
     
-    # permet à l'utilisateur de voir uniquement les personnes qu'il a créées
+    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a créées
     def get_queryset(self, request):
         if request.user.is_superuser:
-            return Personne.objects.all()
-        print(Personne.objects.filter(createur=request.user))
-        return Personne.objects.filter(createur=request.user)
+            return CustomUser.objects.all()
+        print(CustomUser.objects.filter(id_utilisateur=request.user))
+        return CustomUser.objects.filter(id_utilisateur=request.user)
     
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['entreprise', 'date_creation']
+            return ['entreprise', 'date_joined']
         else:
-            return ['date_creation']
+            return ['date_joined'] """
     
 
 @admin.register(Employe)
+
 class EmployeAdmin(admin.ModelAdmin):
-    exclude = ('id_integrateur', 'createur',)#to not be able to change it manually
-    list_display = (nom_empl, empl_entr, 'lieu_fonction', 'createur')
+    #exclude = ('id_integrateur', 'id_utilisateur',)#to not be able to change it manually
+    """ list_display = (nom_empl, empl_entr, 'lieu_fonction', 'id_integrateur')
     
     
-    def save_model(self, request, obj, form, change):
+        def save_model(self, request, obj, form, change):
         if not change:
-            obj.createur = request.user
-        obj.save()
+            obj.id_utilisateur = request.user
+        obj.save()"""
         
-    # permet à l'utilisateur de voir uniquement les personnes qu'il a  créées
-    def get_queryset(self, request):
+    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
+    """ def get_queryset(self, request):
         queryset = super(EmployeAdmin, self).get_queryset(request)
         if request.user.is_superuser:
-            return queryset
-        print(Employe.objects.filter(createur=request.user))
-        return Employe.objects.filter(createur=request.user)
+            return Employe.objects.all()
+        print(Employe.objects.filter(id_utilisateur=request.user))
+        return Employe.objects.filter(id_utilisateur=request.user)  """
     
-    def get_list_filter(self, request):
+    """ def get_queryset(self, request):
         if request.user.is_superuser:
-            return ['id_personne__entreprise', 'id_personne__date_creation']
+            return Employe.objects.all()
+        print(Employe.objects.filter(id_integrateur=request.user))
+        return Employe.objects.filter(id_integrateur=request.user) """
+    
+    """ def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['id_utilisateur__entreprise', 'id_utilisateur__date_joined']
         else:
-            return ['id_personne__date_creation']
+            return ['id_utilisateur__date_joined']
         
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction']
+            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
         else:
-            return []
+            return [] """
     
     #ForeignKey drop list
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "id_personne":
-            kwargs["queryset"] = Personne.objects.filter(createur=request.user)#employe createur
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    """ def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "id_utilisateur":
+            kwargs["queryset"] = CustomUser.objects.filter(id_utilisateur=request.user)#employe id_utilisateur
+        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
     
     
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    exclude = ('createur',)#to not be able to change it manually
+    """exclude = ('id_utilisateur',)#to not be able to change it manually
     @admin.display(description='Employé')
     def employe(obj):
-        return obj.id_employe
-    list_display = (nom_client, employe, 'adr_entreprise', 'num_contrat', 'num_licence', 'statut', 'createur')
+        return obj.id_employe 
+    list_display = (nom_client, 'id_employe', 'adr_entreprise', 'num_contrat', 'num_licence', 'statut', 'id_utilisateur') """
     
-    def save_model(self, request, obj, form, change):
+    """ def save_model(self, request, obj, form, change):
         if not change:
-            obj.createur = request.user
+            obj.id_utilisateur = request.user
         obj.save()
     
-    # permet à l'utilisateur de voir uniquement les personnes qu'il a  créées
+    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
     def get_queryset(self, request):
         queryset = super(ClientAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return queryset
-        print(Client.objects.filter(createur=request.user))
-        return Client.objects.filter(createur=request.user)
+        print(Client.objects.filter(id_utilisateur=request.user))
+        return Client.objects.filter(id_utilisateur=request.user)
     
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['id_personne__entreprise', 'statut', 'createur']
+            return ['id_utilisateur__entreprise', 'statut', 'id_utilisateur']
         else:
-            return ['id_personne__date_creation', 'statut']
+            return ['id_utilisateur__date_joined', 'statut']
         
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__entreprise', 'id_personne__fonction', 'id_personne__createur', 'id_personne__date_creation']
+            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction', 'id_utilisateur__id_utilisateur', 'id_utilisateur__date_joined']
         else:
-            return ['id_personne__nom', 'id_personne__prenom', 'id_personne__mail', 'id_personne__tel', 'id_personne__date_creation', 'id_personne__fonction',]
+            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__date_joined', 'id_utilisateur__fonction',]
     
     #ForeignKey drop list
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "id_personne":
-            kwargs["queryset"] = Personne.objects.filter(createur=request.user)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "id_utilisateur":
+            kwargs["queryset"] = CustomUser.objects.filter(id_utilisateur=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
     
-
-        
-#mettre en place vérificateur pr champ tva + tel
-admin.site.register(Integrateur, IntegrateurAdmin)

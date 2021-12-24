@@ -1,9 +1,6 @@
-#from django.contrib.auth.models import User
 from django.db import models
 import uuid
-#from django.contrib.auth.base_user import BaseUserManager
-
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,183 +40,160 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
-
-
-class CustomUser(AbstractUser):
-    """User model."""
-
-    username = None
-    email = models.EmailField(_('email address'), unique=True)
-    createur = models.ForeignKey('self', max_length=200, on_delete=models.CASCADE)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
     
-    objects = UserManager()
-
-
-
-
-#intégrer Personne avec utilisateurs directs afin qu'ils soient de la même instance que les personnes créées sur le site admin
-class Personne(models.Model):
-    id_personne = models.UUIDField(default=uuid.uuid4, 
+"""
+    Personne
+"""    
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    id_utilisateur = models.UUIDField(default=uuid.uuid4, 
                                    unique=True, 
                                    primary_key=True, 
                                    editable=False)
-    nom = models.CharField(max_length=200)
-    prenom = models.CharField(max_length=200)
-    mail = models.EmailField(max_length=200, unique=True)
+    email = models.EmailField(max_length=254, unique=True)
+    nom = models.CharField(max_length=254, null=True, blank=True)
+    prenom = models.CharField(max_length=254)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
     tel = models.CharField(max_length=20)
     entreprise = models.CharField(max_length=200)
     fonction = models.CharField(max_length=200)
-    date_creation = models.DateTimeField(auto_now_add=True)
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# SUPPRIMER
-    
-    def __str__(self):
-        return str(self.nom)
 
-    
-class Integrateur(models.Model):
-    id_integrateur = models.UUIDField(default=uuid.uuid4, 
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['nom', 'prenom', 'tel', 'entreprise', 'fonction']
+
+    objects = UserManager()
+
+    def get_absolute_url(self):
+        return "/users/%i/" % (self.pk)
+    def get_email(self):
+        return self.email
+    def only_int(tel):
+        if tel.isdigit()==False:
+            raise ValidationError('Le numéro de téléphone contient des caractères')
+    class Meta:
+        db_table = 'ecgsproject_customuser'
+        # Add verbose name
+        verbose_name_plural = 'Utilisateurs'
+
+
+class Integrateur(CustomUser):
+    tva_integrateur = models.UUIDField(default=uuid.uuid4, 
                                    unique=True, 
                                    primary_key=True, 
-                                   editable=False)
-    id_personne = models.OneToOneField(Personne, 
-                                    on_delete=models.CASCADE,
-                                    unique=True)
-    adr_entreprise = models.CharField(max_length=250)
-    tva = models.CharField(max_length=14, unique=True)#international, unique
-    lieu_fonction = models.CharField(max_length=250)
+                                   editable=False,
+                                   max_length = 14)
+    #id_utilisateur = models.OneToOneField(CustomUser, #onetoonefield
+    #                                on_delete=models.CASCADE,
+    #                                unique=True)
+    adr_entreprise = models.CharField(max_length=254)
+    #tva = models.CharField(max_length=14, unique=True)#international, unique
+    lieu_fonction = models.CharField(max_length=254)
+    tel_contact = models.CharField(max_length=20)
     
+    """ def __str__(self):
+        return str(self.id_utilisateur) """
     def __str__(self):
-        return str(self.id_personne)
+        return "%s %s" % (self.nom, self.prenom)
+    def only_int(tel_contact):
+        if tel_contact.isdigit()==False:
+            raise ValidationError('Le numéro de téléphone contient des caractères')
     
-class Employe(models.Model):
+class Employe(CustomUser):
     id_employe = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    id_personne = models.OneToOneField(Personne, 
-                                on_delete=models.CASCADE,
-                                unique=True)
-    id_integrateur = models.ForeignKey(Integrateur, null=True, blank=True,
+    #id_utilisateur = models.OneToOneField(CustomUser,
+    #                                      unique=True,
+    #                            on_delete=models.CASCADE)
+    id_integrateur = models.ForeignKey(Integrateur,
                                 on_delete=models.CASCADE)
-    lieu_fonction = models.CharField(max_length=250)
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# CHANGER DE NOM
+    lieu_fonction = models.CharField(max_length=254)
+    #id_utilisateur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)# CHANGER DE NOM
         
     def __str__(self):
-        return str(self.id_personne)
+        return "%s %s" % (self.nom, self.prenom)
         
+
+    
+class Client(CustomUser):
+    tva_cli = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False,
+                                max_length = 14)
+    id_employe = models.ForeignKey(Employe,
+                                on_delete=models.CASCADE)
+    adr_entreprise = models.CharField(max_length=254)
+    
+    #id_utilisateur = models.ForeignKey(CustomUser, 
+    #                            on_delete=models.CASCADE)
+    #num_contrat = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
+    #num_licence = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
+    #id_utilisateur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)#CHANGER DE NOM
+    
+    def __str__(self):
+        return "%s %s" % (self.nom, self.prenom)
+        
+
+class Contrat(Client):
+    num_contrat = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False)
+    #id_client = models.OneToOneField(Client, 
+    #                                on_delete=models.CASCADE,
+    #                                unique=True)
+    date_creation = models.DateField(null=False, blank=False)
+    date_signature = models.DateField(null=True, blank=True)
+    commentaires_contrat = models.CharField(max_length=250, null=True, blank=True)
+        
+    def __str__(self):
+        return "%s %s %s" % (self.num_contrat, self.nom, self.prenom)
+
+
+class Contrat_detail(Contrat):
+    STATUT = (
+        ('Signé', 'Signé'),
+        ('En Attente', 'En Attente'),
+    )
+    statut = models.CharField(max_length=200, choices=STATUT)
+    
+        
+    """ def __str__(self):
+        return str(self.id_contrat) # ok ? """
+
+
+class Licence(Contrat):
+    num_licence = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False)
+    date_achat = models.DateField()
+    nombre = models.PositiveIntegerField()
+    type = models.CharField(max_length=250)
+    commentaires_lic = models.CharField(max_length=250, null=True, blank=True)
+    
+    def __str__(self):
+        return "%s %s %s" % (self.num_licence, self.num_contrat)
+    
 class Resultat(models.Model):
     id_resultat = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False
                                 )
+    utilisateur = models.ForeignKey(CustomUser,
+                                on_delete=models.CASCADE,
+                                null=True,
+                                blank=True)
     nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
     utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
     date = models.DateTimeField(auto_now_add=True)#test
     
     def __str__(self):
-        return self.title
-    
-class Client(models.Model):
-    INTERET = (
-        ('Interessé', 'Interessé'),
-        ('Abonné', 'Abonné'),
-    )
-    id_client = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    id_personne = models.OneToOneField(Personne, 
-                                on_delete=models.CASCADE,
-                                unique=True)
-    id_employe = models.ForeignKey(Employe, 
-                                null=True,   
-                                blank=True,
-                                on_delete=models.CASCADE)
-    id_resultat = models.ForeignKey(Resultat,
-                                    null=True,
-                                    blank=True,
-                                on_delete=models.CASCADE)
-    adr_entreprise = models.CharField(max_length=250)
-    num_contrat = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
-    num_licence = models.PositiveIntegerField(null=True, blank=True, unique=True)#unique
-    statut = models.CharField(max_length=200, choices=INTERET)#------------------------------------------- A MAJ
-    createur = models.ForeignKey(CustomUser, on_delete=models.CASCADE)#CHANGER DE NOM
-    
-    def __str__(self):
-        return str(self.id_personne)
-        
-""" class Ticket(models.Model):
-    STATUT = (
-        ('Ouvert', 'Ouvert'),
-        ('En attente', 'En attente'),
-        ('Résolu', 'Résolu'),
-        ('Fermé', 'Fermé')
-    )
-    id_ticket = models.UUIDField(default=uuid.uuid4, 
-                                unique=True,
-                                primary_key=True, 
-                                editable=False)
-    titre = models.CharField(max_length=200)
-    num_licence = models.PositiveIntegerField()
-    commentaire = models.TextField(blank=True, null=True)
-    statut = models.CharField(max_length=200, choices=STATUT)
-
-    def __str__(self):
-        return str(self.titre)
-        
-        
-class Detail_Ticket(models.Model):
-    id_ticket = models.ForeignKey(Ticket,
-                                null=True,
-                                on_delete=models.SET_NULL)
-    id_client = models.ForeignKey(Client, 
-                                null=True,
-                                on_delete=models.SET_NULL)
-    date_creation = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return str(self.id_ticket)
-        
-class Rep_Ticket(models.Model):
-    id_rep_ticket = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    id_ticket = models.ForeignKey(Ticket,
-                                  null=True,
-                                on_delete=models.SET_NULL)
-    reponse = models.TextField(null=True)
-    date = models.DateField(auto_now_add=True)
-    resolu_par = models.CharField(max_length=200)#reprendre les noms depuis la bd ?
-    
-    def __str__(self):
-        return str(self.id_ticket)
-
-class Contrat(models.Model):
-    id_contrat = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    id_client = models.OneToOneField(Client, 
-                                    on_delete=models.CASCADE,
-                                    unique=True)#pls contrats possibles par client ?
-    date_ctr = models.DateField()
-        
-    def __str__(self):
-        return str(self.id_client) 
-    
-class Licence(models.Model):
-    id_licence = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    id_contrat = models.ForeignKey(Contrat,
-                                on_delete=models.CASCADE)
-    date_lic = models.DateField()
-    
-    def __str__(self):
-        return str(self.id_contrat) """
+        return "%s %s %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.id_resultat)
