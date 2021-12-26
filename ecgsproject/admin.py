@@ -106,7 +106,7 @@ class IntegrateurAdmin(admin.ModelAdmin):
     
     
 
-""" @admin.register(CustomUser)
+""" 
 class CustomUserAdmin(admin.ModelAdmin):
     exclude = ('id_utilisateur',)#to not be able to change it manually
     list_display = ('nom', 'prenom', 'email', 'tel', 'entreprise', 'fonction', 'date_joined', 'id_utilisateur')

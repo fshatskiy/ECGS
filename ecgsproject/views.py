@@ -94,7 +94,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.email_confirmed=True
         user.save()
-        messages.success(request, 'Votre compte a bien été vérifié. Veuillez maintenant vérifier si l\'administrateur a activé votre compte en vous y connectant.')
+        messages.success(request, 'Votre compte a bien été vérifié. Veuillez maintenant vérifier si l\'administrateur a activé votre compte en vous connectant sur le portail http://127.0.0.1:8000/admin .')
         return redirect('accueil')
     else:
         messages.error(request, 'Le lien d\'activation n\'est plus valide ! Veuillez vous réinscrire')

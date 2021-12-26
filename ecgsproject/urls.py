@@ -6,7 +6,7 @@ from . import views
 from ecgsproject.views import CustomLoginView
 from django.contrib.auth.views import LogoutView
 
-admin.site.site_header = 'Administration générale de EcoGreenSoft'
+admin.site.site_header = 'Portail d\'EcoSoft'
 # ajouter l'accueil
 
 #app_name = "ecgsproject"

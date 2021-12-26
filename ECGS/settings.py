@@ -143,6 +143,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 #SMTP Configuration
 #EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND')
+ACCOUNT_ACTIVATION_DAYS = 7
+AUTH_USER_EMAIL_UNIQUE = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_PORT = 587

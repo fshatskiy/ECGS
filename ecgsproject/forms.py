@@ -19,7 +19,7 @@ from django.utils.translation import ugettext as _
 class RegisterForm(UserCreationForm):
     class Meta:  
         model = CustomUser  
-        fields = ('email', 'password1', 'password2',)# fields = ['Nom', 'Prenom', 'Adresse e-mail', 'Téléphone', 'Nom Entreprise', 'Votre fonction', 'password1', 'password2']
+        fields = ('email', 'password1', 'password2', 'nom', 'prenom')# fields = ['Nom', 'Prenom', 'Adresse e-mail', 'Téléphone', 'Nom Entreprise', 'Votre fonction', 'password1', 'password2']
             
         
         """ def clean(self):
