@@ -25,7 +25,7 @@ UserModel = get_user_model()
 # Create your views here.
 
 def accueil(request):
-    return render(request, 'accueil.html')
+    return render(request, 'base.html')
 
 
 class CustomLoginView(LoginView):
