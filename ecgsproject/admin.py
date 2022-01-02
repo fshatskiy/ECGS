@@ -16,11 +16,12 @@ class CustomUserAdmin(DjangoUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            #if client, sans demande de mdp lors de l'enregistrement
+            'fields': ('nom', 'prenom', 'email', 'password1', 'password2', 'tel', 'entreprise'),# Création d'un nouveau utilisateur via "Utilisateurs  +ADD"
         }),
         )
     #exclude = ('id_utilisateur', )
-    list_display = ('nom', 'prenom', 'email', 'is_staff')#
+    list_display = ('nom', 'prenom', 'email', 'is_staff', 'created_date', 'modified_date')#
     search_fields = ('email', 'nom', 'prenom', 'tel', 'entreprise')
     ordering = ('email',)
     
@@ -41,22 +42,35 @@ class CustomUserAdmin(DjangoUserAdmin):
     
     """ def save_model(self, request, obj, form, change):
         if not change:
-            obj.id_utilisateur = request.user
-        obj.save()
+            #print(obj.id_utilisateur, "obj.id_utilisateur")
+            obj.email = request.user
+            print(obj.email, "obj.email de save_model : CustomUserAdmin")
+        obj.save() """
+    
+    #voir les utilisateurs créés par request.user
+    # faire la meme chose pour les get_queryset de int et employé etc...
+    #ajouter modified_by
+    #PAS BESOIN AU NIVEAU D'ADMIN car il n'y a que l'admin qui crée l'admin
+    """ def get_queryset(self, request):
+        if request.user.is_superuser:
+            return CustomUser.objects.all()
+        return CustomUser.objects.filter(id_utilisateur=request.user)
+        print("ADMIN : ID_UTILISATEUR :        ", id_utilisateur) """
     
     #ces deux fonctions permettent à l'utilisateur de voir uniquement les utilisateurs créés par lui même    
-    def get_queryset(self, request):
+    """ def get_queryset(self, request):
         queryset = super(CustomUserAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return CustomUser.objects.all()
-        print(CustomUser.objects.filter(email=request.user))
-        return CustomUser.objects.filter(email=request.user) """
+        print(CustomUser.objects.filter(prenom=request.user))
+        return CustomUser.objects.filter(prenom=request.user) """
+    
     
     """ def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['entreprise', 'date_joined', 'is_active', 'is_staff', 'is_superuser']#
+            return ['entreprise', 'date_joined', 'is_active', 'is_staff', 'is_superuser']
         else:
-            return ['date_joined', 'is_active', 'is_staff'] """
+            return ['date_joined', 'is_active', 'is_staff'] """ 
 
 #admin.site.unregister(CustomUser, CustomUserAdmin)
 #admin.site.register(CustomUser, CustomUserAdmin)
@@ -83,15 +97,41 @@ def nom_client(obj):
     return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom) """
 
 @admin.register(Resultat)
-@admin.register(Contrat)
-@admin.register(Contrat_detail)
 @admin.register(Licence)
 @admin.register(Integrateur)
 
 
 class IntegrateurAdmin(admin.ModelAdmin):    
-    """list_display = (nom_int, int_entr, 'adr_entreprise', 'lieu_fonction')
-    def get_list_filter(self, request):
+    
+    #list_display = ('adr_entreprise', 'lieu_fonction', 'tel_contact')
+    
+    #ajouter modified_by
+    def save_model(self, request, obj, form, change):
+        print("here1")
+        if not change:
+            print("here2")
+            #print(obj.id_utilisateur, "obj.id_utilisateur")
+            obj.created_by = request.user
+            print("here3")
+            print(obj.created_by, "obj.utilisateur de save_model => IntegrateurAdmin")
+        print("here4")
+        obj.save()
+        print("here5")
+    
+    # permet à l'integrateur?????? de voir uniquement les utilisateurs qu'il a créées    
+    def get_queryset(self, request):
+        print("here11")
+        if request.user.is_superuser:
+            print("here22")
+            return Integrateur.objects.all()
+            print("here33")
+        print("here44")
+        return Integrateur.objects.filter(created_by=request.user)# ici "utilisateur" = FK CustomUser
+        print("IntegrateurAdmin : UTILISATEUR :        ", created_by)
+        
+    
+    
+    """def get_list_filter(self, request):
         if request.user.is_superuser:
             return ['id_utilisateur__date_joined']
         else:
@@ -101,8 +141,8 @@ class IntegrateurAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
         else:
-            return [] 
-"""
+            return []  """
+
     
     
 
@@ -133,13 +173,25 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 class EmployeAdmin(admin.ModelAdmin):
     #exclude = ('id_integrateur', 'id_utilisateur',)#to not be able to change it manually
-    """ list_display = (nom_empl, empl_entr, 'lieu_fonction', 'id_integrateur')
+    """ 
+    # affichage dans le portail qui remplace le def __str__(self):
+    list_display = ('utilisateur', 'lieu_fonction', 'integrateur') """
     
-    
-        def save_model(self, request, obj, form, change):
+    #obj.integrateur du model "employe" bon ?
+    #ajouter modified_by
+    def save_model(self, request, obj, form, change):
         if not change:
-            obj.id_utilisateur = request.user
-        obj.save()"""
+            #print(obj.id_utilisateur, "obj.id_utilisateur")
+            obj.created_by = request.user
+            print(obj.created_by, "obj.integrateur de save_model => EmployeAdmin")
+        obj.save()
+        
+    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées    
+    def get_queryset(self, request):
+        if request.user.is_superuser:
+            return Employe.objects.all()
+        return Employe.objects.filter(created_by=request.user)
+        print("EMPLOYEADMIN : INTEGRATEUR :        ", created_by)
         
     # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
     """ def get_queryset(self, request):
@@ -213,3 +265,13 @@ class ClientAdmin(admin.ModelAdmin):
             kwargs["queryset"] = CustomUser.objects.filter(id_utilisateur=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs) """
     
+    @admin.register(Contrat)
+    class Contrat_detailAdmin(admin.ModelAdmin):
+        exclude = ('id_contrat_detail',)
+        list_display = ('num_contrat', 'client', 'date_creation')
+    
+    
+    @admin.register(Contrat_detail)
+    class Contrat_detailAdmin(admin.ModelAdmin):
+        exclude = ('id_contrat_detail',)
+        list_display = ('contrat', 'statut')
