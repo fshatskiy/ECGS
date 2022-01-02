@@ -113,15 +113,14 @@ class Integrateur(DateCrDateMod):
                                    unique=True, 
                                    primary_key=True, 
                                    editable=False,
-                                   max_length = 14,
-                                   , related_name='TVA')
+                                   max_length = 14)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
-    adr_entreprise = models.CharField(max_length=254, related_name='Adresse de l\'entreprise')
+    adr_entreprise = models.CharField(max_length=254)
     #tva = models.CharField(max_length=14, unique=True)#international, unique
-    lieu_fonction = models.CharField(max_length=254, related_name='Lieu de sa fonction')
-    tel_contact = models.CharField(max_length=20, related_name='Téléphone contact')
+    lieu_fonction = models.CharField(max_length=254)
+    tel_contact = models.CharField(max_length=20)
     
     def __str__(self):
         return "%s" % (self.utilisateur)
