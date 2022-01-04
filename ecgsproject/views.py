@@ -25,7 +25,7 @@ UserModel = get_user_model()
 # Create your views here.
 
 def accueil(request):
-    return render(request, 'base.html')
+    return render(request, 'index.html')
 
 
 class CustomLoginView(LoginView):
@@ -45,6 +45,7 @@ class CustomLoginView(LoginView):
 
 # ajouter les check necessaires : if not empty, doesn't exist...
 def signup(request):
+    print("enter signup")
     if request.user.is_authenticated:
         return redirect('accueil')
     if request.method == 'GET':

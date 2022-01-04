@@ -43,10 +43,10 @@ class UserManager(BaseUserManager):
     
     
 class DateCrDateMod(models.Model):
-    created_date = models.DateTimeField(auto_now=True)
-    modified_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now=True, editable=False)
+    modified_date = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
     created_by = models.CharField(max_length=254, editable=False)
-    modified_by = models.CharField(max_length=254, editable=False)
+    modified_by = models.CharField(max_length=254, editable=False, null=True, blank=True)
 
     class Meta:
         abstract = True

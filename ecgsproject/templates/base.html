@@ -58,7 +58,7 @@
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex align-items-center">
       <!-- LOGO -->
-      <a href="index.html" class="logo me-auto"><img src="{% static 'assets/img/logo.png' %}" alt="Logo EcoSoft" class="img-fluid" ></a>
+      <a href="{% url 'accueil' %}" class="logo me-auto"><img src="{% static 'assets/img/ecosoft-coupe.png' %}" alt="Logo EcoSoft" class="img-fluid" ></a>
 
       <nav id="navbar" class="navbar">
         <ul>
@@ -85,7 +85,7 @@
             </ul>
           </li>
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
-          <li><a class="getstarted scrollto" href="#about">Get Started</a></li>
+          <li><a class="getstarted scrollto" href="{% url 'register' %}">Devenir membre</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
@@ -93,9 +93,9 @@
     </div>
   </header><!-- End Header -->
 
-  <main id="main">
+  {% block content %}
 
-    <!-- ======= Breadcrumbs ======= -->
+    <!-- ======= Breadcrumbs ======= 
     <section class="breadcrumbs">
       <div class="container">
 
@@ -108,22 +108,14 @@
         </div>
 
       </div>
-    </section><!-- End Breadcrumbs -->
+    </section> End Breadcrumbs -->
 
-    <section class="inner-page">
-      <div class="container">
-        <p>
-          {% block content %}{% endblock content %}
-        </p>
-      </div>
-    </section>
-
-  </main><!-- End #main -->
-
+  {% endblock content %}
+  
   <!-- ======= Footer ======= -->
   <footer id="footer">
     <div class="container">
-      <h3>Green</h3>
+      <a href="{% url 'accueil' %}" class="logo me-auto"><img src="{% static 'assets/img/ecosoft-coupe.png' %}" alt="Logo EcoSoft" class="img-fluid" ></a>
       <p>Et aut eum quis fuga eos sunt ipsa nihil. Labore corporis magni eligendi fuga maxime saepe commodi placeat.</p>
       <div class="social-links">
         <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
