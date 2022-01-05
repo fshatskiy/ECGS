@@ -13,7 +13,7 @@ admin.site.site_header = 'Portail d\'EcoSoft'
 
 urlpatterns = [ 
     path('', views.accueil, name='accueil'),
-    
+    path('admin/', views.accueil, name='admin'),
     path('register/', views.signup, name='register'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'), 
     path('login/', CustomLoginView.as_view(), name='login'),

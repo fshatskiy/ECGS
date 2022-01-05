@@ -41,7 +41,7 @@ class CustomLoginView(LoginView):
         return reverse_lazy('accueil') """
         
     def get_success_url(self):
-        return reverse_lazy('accueil')
+        return reverse_lazy('admin')
 
 # ajouter les check necessaires : if not empty, doesn't exist...
 def signup(request):

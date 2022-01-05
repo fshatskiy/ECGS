@@ -213,5 +213,5 @@ class Licence(models.Model):
     commentaires_lic = models.CharField(max_length=250, null=True, blank=True)
     
     def __str__(self):
-        return "%s %s %s" % (self.num_licence, self.contrat)
+        return "%s %s" % (self.num_licence, self.contrat)
     
