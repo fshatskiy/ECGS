@@ -58,7 +58,7 @@ class CustomUserAdmin(DjangoUserAdmin):
         print("here4")
         obj.save()
         
-        # permet à l'user de voir uniquement les utilisateurs qu'il a créées    
+        # permet à l'user de voir uniquement les utilisateurs qu'il a créées DANS UTILISATEURS : pour tout le monde
     def get_queryset(self, request):
         print("here11")
         if request.user.is_superuser:
@@ -108,7 +108,6 @@ class IntegrateurAdmin(admin.ModelAdmin):
     
     #list_display = ('adr_entreprise', 'lieu_fonction', 'tel_contact')
     
-    #ajouter modified_by
     def save_model(self, request, obj, form, change):
         print("here1")
         if change:
@@ -125,25 +124,25 @@ class IntegrateurAdmin(admin.ModelAdmin):
         print("here4")
         obj.save()
     
-    # permet à l'user de voir uniquement les utilisateurs qu'il a créées    
-    def get_queryset(self, request):
+    # permet à l'user de voir uniquement les utilisateurs qu'il a créées    , osef car integrateur : il n'a pas accès aux integrateurs de toute facon
+    """ def get_queryset(self, request):
         print("here11")
         if request.user.is_superuser:
             print("here22")
             return Integrateur.objects.all()
         print("here33")
         print("INTEGRATEURADMIN filtre")
-        return Integrateur.objects.filter(created_by=request.user)
+        return Integrateur.objects.filter(created_by=request.user) """
         
     #ne sert à rien ? car lorsque je me co en tant qu'int, je n'ai pas besoin de créer d'autres int.
     """ def formfield_for_foreignkey(self, db_field, request, **kwargs):
         print("here111int")
-        if db_field.name == "utilisateur" and request.user.is_superuser:
+        if db_field.name == "integrateur" and request.user.is_superuser:
             print("here222int")
-            kwargs["queryset"] = CustomUser.objects.all()
-        elif db_field.name == "utilisateur" and not request.user.is_superuser:
+            kwargs["queryset"] = Integrateur.objects.all()
+        elif db_field.name == "integrateur" and not request.user.is_superuser:
             print("here333int")
-            kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)#employe id_utilisateur
+            kwargs["queryset"] = Integrateur.objects.filter(created_by=request.user)#employe id_utilisateur
         print("here444int")
         return super().formfield_for_foreignkey(db_field, request, **kwargs) """
         
@@ -179,15 +178,13 @@ class CustomUserAdmin(admin.ModelAdmin):
 @admin.register(Employe)
 
 class EmployeAdmin(admin.ModelAdmin):
-    #exclude = ('id_integrateur', 'id_utilisateur',)#to not be able to change it manually
+    #readonly_fields = ('integrateur',)#to not be able to change it manually
+    
     """ 
     # affichage dans le portail qui remplace le def __str__(self):
     list_display = ('utilisateur', 'lieu_fonction', 'integrateur') """
-    #exclude = ('integrateur',)
     
-    
-    #obj.integrateur du model "employe" bon ?
-    #ajouter modified_by
+    #Save models 
     def save_model(self, request, obj, form, change):
         print("here1")
         if change:
@@ -207,7 +204,8 @@ class EmployeAdmin(admin.ModelAdmin):
         print("here4") """
         obj.save()
         
-    # permet à l'utilisateur de voir uniquement les utilisateurs qu'il a créés    
+    # permet à l'utilisateur de voir uniquement les utilisateurs qu'il a créés   
+    #Filter the employees in "Employee" list 
     def get_queryset(self, request):
         print("here11")
         if request.user.is_superuser:
@@ -217,26 +215,31 @@ class EmployeAdmin(admin.ModelAdmin):
         print("EMPLOYEADMIN filtre")
         return Employe.objects.filter(created_by=request.user)
     
-    # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés    
+    # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés   
+    #Filter the "Utilisateur" field droplist to show only the users created by request.user 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         print("here111empl")
         if db_field.name == "utilisateur" and request.user.is_superuser:
             print("here222empl")
             kwargs["queryset"] = CustomUser.objects.all()
         elif db_field.name == "utilisateur" and not request.user.is_superuser:
+            """ emails = Integrateur.objects.all()
+            for integrateur in emails:
+                print("emails : ", integrateur.utilisateur) """
             print("here333empl")
             kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)#employe id_utilisateur
         print("here444empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
-    #fonction permettant à n'afficher que l'integrateur 
-    """ def formfield_for_foreignkey2(self, db_field, request, **kwargs):
-        print("here111empl2")
-        if db_field.name == "integrateur" and not request.user.is_superuser:
-            print("here222empl2")
-            kwargs["queryset"] = Integrateur.objects.filter(utilisateur=request.user)
-        print("here333empl2")
-        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
+    #trouver comment choisir automatiquement request.user au champ integrateur même s'il est caché/read-only. Si r-o, alors il ne tient plus compte du initial
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        print("droplistforfk enter")
+        if db_field.name == "integrateur":
+             kwargs["initial"] = Integrateur.objects.filter(utilisateur=request.user) #choix initial (le "-------" est remplacé)
+             print("2e fonction bon")
+             return db_field.formfield(**kwargs)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+         
         
     # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
     
