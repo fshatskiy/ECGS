@@ -19,7 +19,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import RegisterForm
+from .forms import LoginForm, RegisterForm
 
 UserModel = get_user_model()
 # Create your views here.
@@ -28,20 +28,43 @@ def accueil(request):
     return render(request, 'index.html')
 
 
-class CustomLoginView(LoginView):
+""" class CustomLoginView(LoginView):
+    #form_class = LoginForm
     template_name = 'login.html'
     fields = '__all__'
     redirect_authenticated_user = True
     
     #def user_is_active(self, user):
-    """ if user.is_active:
+    if user.is_active:
             messages.success('Votre compte a bien été activé.')
         else:
             messages.warning('Votre compte n\'a pas encore été approuvé par l\'administrateur du site.')
-        return reverse_lazy('accueil') """
+        return reverse_lazy('accueil')
         
     def get_success_url(self):
-        return reverse_lazy('admin')
+        return reverse_lazy('admin') """
+
+
+#mettre en place les if : sécurité
+def loginPage(request):
+    if request.user.is_authenticated:
+        return redirect('accueil')
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]# We check if the data is correct
+        
+        user = authenticate(request, email=email, password=password)
+        
+        if user is not None:
+            login(request, user)# we connect the user
+            return redirect('admin')
+        else:  # otherwise an error will be displayed
+                messages.error(request, 'Adresse email ou mot de passe sont invalides')
+    else:
+        form=LoginForm()
+    return render(request, 'login.html', {'form': form})
 
 # ajouter les check necessaires : if not empty, doesn't exist...
 def signup(request):
