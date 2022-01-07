@@ -109,11 +109,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
 
 
 class Integrateur(DateCrDateMod):
-    tva_integrateur = models.UUIDField(default=uuid.uuid4, 
+    id_integrateur = models.UUIDField(default=uuid.uuid4, 
                                    unique=True, 
                                    primary_key=True, 
                                    editable=False,
                                    max_length = 14)
+    tva_integrateur = models.CharField(max_length = 14)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
@@ -123,7 +124,7 @@ class Integrateur(DateCrDateMod):
     tel_contact = models.CharField(max_length=20)
     
     def __str__(self):
-        return "%s" % (self.utilisateur)
+        return "%s %s %s %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.utilisateur.email, self.utilisateur.entreprise)
     def only_int(tel_contact):
         # ValidationError ne foctionne pas
         if tel_contact.isdigit()==False:
@@ -147,11 +148,11 @@ class Employe(DateCrDateMod):
 
     
 class Client(DateCrDateMod):
-    tva_cli = models.UUIDField(default=uuid.uuid4, 
+    id_client = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
-                                editable=False,
-                                max_length = 14)
+                                editable=False)
+    tva_cli = models.CharField(max_length = 14)
     employe = models.ForeignKey(Employe,
                                 on_delete=models.CASCADE)
     utilisateur = models.OneToOneField(CustomUser,
@@ -162,7 +163,17 @@ class Client(DateCrDateMod):
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
 
-
+class Contrat_detail(models.Model):
+    STATUT = (
+        ('Signé', 'Signé'),
+        ('En Attente', 'En Attente'),
+    )
+    id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False)
+    statut = models.CharField(max_length=200, choices=STATUT)
+    date_signature = models.DateField(null=True, blank=True)
 
 
 class Contrat(DateCrDateMod):
@@ -173,27 +184,13 @@ class Contrat(DateCrDateMod):
     num_contrat = models.CharField(max_length=254, null=False, blank=False, unique=True)
     client = models.ForeignKey(Client, 
                                on_delete=models.CASCADE)
-    """ contrat_detail = models.ForeignKey(Contrat_detail, 
-                               on_delete=models.CASCADE) """
+    contrat_detail = models.OneToOneField(Contrat_detail, 
+                               on_delete=models.CASCADE)
     date_creation = models.DateField(null=False, blank=False, auto_now=True)
     commentaires_contrat = models.CharField(max_length=250, null=True, blank=True)
         
     def __str__(self):
         return "Numéro du contrat: %s | Nom: %s | Prenom: %s" % (self.num_contrat, self.client.utilisateur.nom, self.client.utilisateur.prenom)
-    
-class Contrat_detail(models.Model):
-    STATUT = (
-        ('Signé', 'Signé'),
-        ('En Attente', 'En Attente'),
-    )
-    id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    contrat = models.ForeignKey(Contrat, 
-                               on_delete=models.CASCADE)
-    statut = models.CharField(max_length=200, choices=STATUT)
-    date_signature = models.DateField(null=True, blank=True)
     
         
     def __str__(self):

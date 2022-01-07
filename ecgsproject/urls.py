@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf.urls import url
 from . import views
-from ecgsproject.views import CustomLoginView
+from ecgsproject.views import loginPage
 from django.contrib.auth.views import LogoutView
 
 admin.site.site_header = 'Portail d\'EcoSoft'
@@ -16,7 +16,7 @@ urlpatterns = [
     path('admin/', views.accueil, name='admin'),
     path('register/', views.signup, name='register'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'), 
-    path('login/', CustomLoginView.as_view(), name='login'),
+    path('login/', views.loginPage, name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     
     url(r'^', include('django.contrib.auth.urls')),
