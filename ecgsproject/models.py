@@ -124,7 +124,7 @@ class Integrateur(DateCrDateMod):
     tel_contact = models.CharField(max_length=20)
     
     def __str__(self):
-        return "%s %s %s %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.utilisateur.entreprise, self.utilisateur.email)
+        return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
     def only_int(tel_contact):
         # ValidationError ne foctionne pas
         if tel_contact.isdigit()==False:
@@ -143,7 +143,7 @@ class Employe(DateCrDateMod):
     lieu_fonction = models.CharField(max_length=254)
         
     def __str__(self):
-        return "%s %s - %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.utilisateur.email)
+        return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
         
 
     

@@ -88,6 +88,7 @@
           {% if request.user.is_authenticated %}
           <li><b class="nav-link scrollto">{{request.user}}</b></li>
           <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'logout' %}">Se déconnecter</a></li>
+          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'admin' %}">Portail</a></li>
           {% else %}
           <li><a class="getstarted scrollto" href="{% url 'register' %}">Devenir membre</a></li>
           <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
