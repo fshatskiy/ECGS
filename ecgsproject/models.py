@@ -124,7 +124,7 @@ class Integrateur(DateCrDateMod):
     tel_contact = models.CharField(max_length=20)
     
     def __str__(self):
-        return "%s %s %s %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.utilisateur.email, self.utilisateur.entreprise)
+        return "%s %s %s %s" % (self.utilisateur.nom, self.utilisateur.prenom, self.utilisateur.entreprise, self.utilisateur.email)
     def only_int(tel_contact):
         # ValidationError ne foctionne pas
         if tel_contact.isdigit()==False:
@@ -163,18 +163,6 @@ class Client(DateCrDateMod):
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
 
-class Contrat_detail(models.Model):
-    STATUT = (
-        ('Signé', 'Signé'),
-        ('En Attente', 'En Attente'),
-    )
-    id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False)
-    statut = models.CharField(max_length=200, choices=STATUT)
-    date_signature = models.DateField(null=True, blank=True)
-
 
 class Contrat(DateCrDateMod):
     id_contrat = models.UUIDField(default=uuid.uuid4, 
@@ -183,8 +171,6 @@ class Contrat(DateCrDateMod):
                                 editable=False)
     num_contrat = models.CharField(max_length=254, null=False, blank=False, unique=True)
     client = models.ForeignKey(Client, 
-                               on_delete=models.CASCADE)
-    contrat_detail = models.OneToOneField(Contrat_detail, 
                                on_delete=models.CASCADE)
     date_creation = models.DateField(null=False, blank=False, auto_now=True)
     commentaires_contrat = models.CharField(max_length=250, null=True, blank=True)
@@ -196,6 +182,21 @@ class Contrat(DateCrDateMod):
     def __str__(self):
         return "Numéro du contrat : ontrat : %s %s" % (self.contrat, self.statut)
     
+class Contrat_detail(models.Model):
+    STATUT = (
+        ('Signé', 'Signé'),
+        ('En Attente', 'En Attente'),
+    )
+    id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False)
+    contrat = models.OneToOneField(Contrat, 
+                               on_delete=models.CASCADE)
+    statut = models.CharField(max_length=200, choices=STATUT)
+    date_signature = models.DateField(null=True, blank=True)
+
+
 class Licence(models.Model):
     id_licence = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 

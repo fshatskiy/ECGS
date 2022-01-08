@@ -100,7 +100,6 @@ def nom_client(obj):
     return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom) """
 
 @admin.register(Resultat)
-@admin.register(Licence)
 @admin.register(Integrateur)
 
 
@@ -287,13 +286,30 @@ class ClientAdmin(admin.ModelAdmin):
     """
     
     
-    @admin.register(Contrat)
-    class ContratAdmin(admin.ModelAdmin):
-        exclude = ('id_contrat',)
-        list_display = ('num_contrat', 'client', 'date_creation')
+""" @admin.register(Contrat)
+class ContratAdmin(admin.ModelAdmin):
+    exclude = ('id_contrat',)
+    list_display = ('num_contrat', 'client', 'date_creation')
     
     
-    @admin.register(Contrat_detail)
-    class Contrat_detailAdmin(admin.ModelAdmin):
-        exclude = ('id_contrat_detail',)
-        list_display = ('contrat', 'statut')
+@admin.register(Contrat_detail)
+class Contrat_detailAdmin(admin.ModelAdmin):
+    exclude = ('id_contrat_detail',)
+    list_display = ('contrat', 'statut') """
+        
+        
+"""
+Inlines : permet de regrouper plusieurs models en un dans la page Django Admin.
+"""
+class Contrat_detailInline(admin.TabularInline):
+    model = Contrat_detail
+    
+class LicenceInline(admin.TabularInline):
+    model = Licence
+
+@admin.register(Contrat)
+class ContratAdmin(admin.ModelAdmin):
+    inlines = [
+        Contrat_detailInline,
+        LicenceInline
+    ]
