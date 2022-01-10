@@ -12,6 +12,7 @@ from .models import (
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
+from django import forms
 
 # Register your models here.
 
@@ -55,6 +56,7 @@ class CustomUserAdmin(DjangoUserAdmin):
         "tel",
         "is_staff",
         "created_date",
+        "created_by",
     )  #
     list_filter = (
         "entreprise",
@@ -252,14 +254,26 @@ class CustomUserAdmin(admin.ModelAdmin):
         else:
             return ['date_joined'] """
 
+"""Cleaning data and raising errors for Employe Model"""
+""" class EmployeForm(forms.ModelForm):
+    class Meta:
+        model = Employe
+        fields = '__all__'
+    def equals_entreprise(self):
+        entreprise = self.cleaned_data['entreprise']
+        if Employe.utilisateur.entreprise != Employe.integrateur.utilisateur.entreprise:
+            raise forms.ValidationError("Le nom de l'entreprise ne correspond pas avec celui de votre intégrateur")
+        return entreprise """
 
 
 @admin.register(Employe)
 class EmployeAdmin(admin.ModelAdmin):
     # readonly_fields = ('integrateur',)#to not be able to change it manually
 
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "integrateur", "get_email", "get_tel", ]
-
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "created_by" ]
+    
+    #form = EmployeForm #lien vers le formulaire
+    
     def get_nom(self, obj):
         return obj.utilisateur.nom
     get_nom.admin_order_field  = 'utilisateur__nom'  #Allows column order sorting
@@ -291,11 +305,19 @@ class EmployeAdmin(admin.ModelAdmin):
         if change:
             # print(obj.id_utilisateur, "obj.id_utilisateur")
             print("here2")
+            """ if obj.utilisateur.entreprise != obj.integrateur.utilisateur.entreprise:
+                print("erreur modif equald entreprises : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
+            #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
+            #print("MODIF j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.modified_by = str(request.user)
             obj.modified_date = datetime.now()
             print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
         if not change:
             print("here3")
+            """ if obj.utilisateur.entreprise != obj.integrateur.utilisateur.entreprise:
+                print("erreur equald entreprises : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
+            #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
+            #print("CREATION j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.created_by = request.user
             obj.created_date = datetime.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
@@ -303,6 +325,8 @@ class EmployeAdmin(admin.ModelAdmin):
         obj.integrateur_id = request.user
         print(request.user.tva_integrateur, " : integrateur = request.user.tva_integrateur")
         print("here4") """
+        """ obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
+        print("FIN j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
         obj.save()
 
     # permet à l'utilisateur de voir uniquement les utilisateurs qu'il a créés
@@ -324,18 +348,19 @@ class EmployeAdmin(admin.ModelAdmin):
             print("here222empl")
             kwargs["queryset"] = CustomUser.objects.all()
         elif db_field.name == "utilisateur" and not request.user.is_superuser:
-            """emails = Integrateur.objects.all()
-            for integrateur in emails:
-                print("emails : ", integrateur.utilisateur)"""
             print("here333empl")
             kwargs["queryset"] = CustomUser.objects.filter(
                 created_by=request.user
             )  # employe id_utilisateur
+        elif db_field.name == "integrateur" and not request.user.is_superuser:
+            print("here333empl")
+            print("test création Employe :", Integrateur.objects.filter(utilisateur=request.user))
+            kwargs["queryset"] = Integrateur.objects.filter(utilisateur=request.user)
         print("here444empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     # trouver comment choisir automatiquement request.user au champ integrateur même s'il est caché/read-only. Si r-o, alors il ne tient plus compte du initial
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    """ def formfield_for_foreignkey(self, db_field, request, **kwargs):
         print("droplistforfk enter")
         if db_field.name == "integrateur":
             kwargs["initial"] = Integrateur.objects.filter(
@@ -343,7 +368,7 @@ class EmployeAdmin(admin.ModelAdmin):
             )  # choix initial (le "-------" est remplacé)
             print("2e fonction bon")
             return db_field.formfield(**kwargs)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
 
     # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
 
@@ -365,9 +390,8 @@ class EmployeAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by"]
     
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise"]
-
     def get_nom(self, obj):
         return obj.utilisateur.nom
     get_nom.admin_order_field  = 'utilisateur__nom'  #Allows column order sorting
@@ -414,7 +438,54 @@ class ClientAdmin(admin.ModelAdmin):
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
         
         obj.save()
+        
+# permet à l'utilisateur de voir uniquement les contrats qu'il a créés
+    def get_queryset(self, request):
+        print("here11")
+        if request.user.is_superuser:
+            print("here22")
+            return Client.objects.all()
+        else:
+            # Affiche les clients créés par les employés provenant d'un MEME intégrateur
+            for i in Employe.objects.filter(created_by = request.user):
+                print("employés : ", i.utilisateur.email)
+                mail = i.utilisateur.email
+                e = Client.objects.filter(created_by = mail)
+                print("clients : ", e)
+            print("clients créés par les employeurs d'un même intégrateur : ", Client.objects.filter(created_by = mail))
+            return Client.objects.filter(created_by=mail)
+        #AFFICHER LES CLIENTS CREES PAR LES EMPLOYES CONNECTES MNT
     
+
+    # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés
+    # Filter the "Utilisateur" field droplist to show only the users created by request.user
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        print("here111empl")
+        if db_field.name == "employe" and request.user.is_superuser:
+            print("here222empl")
+            kwargs["queryset"] = Employe.objects.all()
+        elif db_field.name == "employe" and not request.user.is_superuser:
+            #emails = Integrateur.objects.all()
+            #for integrateur in emails:
+            #    print("emails : ", integrateur.utilisateur)
+            print("here333empl")
+            test = request.user
+            print("test :", Employe.objects.filter(utilisateur=request.user))
+            kwargs["queryset"] = Employe.objects.filter(utilisateur=request.user)  # employe id_utilisateur
+        elif db_field.name == "utilisateur" and not request.user.is_superuser:
+            #emails = Integrateur.objects.all()
+            #for integrateur in emails:
+            #    print("emails : ", integrateur.utilisateur)
+            print("here333empl")
+            test = request.user
+            print("test :", CustomUser.objects.filter(created_by=request.user))
+            kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)
+        print("here444empl")
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+
+
     """exclude = ('id_utilisateur',)#to not be able to change it manually
     @admin.display(description='Employé')
     def employe(obj):
@@ -439,25 +510,101 @@ class ClientAdmin(admin.ModelAdmin):
     """
 
 
-"""
-Inlines : permet de regrouper plusieurs models en un dans la page Django Admin.
-"""
 
 
+
+
+"""
+                                                    Inlines : permet de regrouper plusieurs models en un dans la page Django Admin.
+                                                    """
+
+"""         CONTRAT       """
 class Contrat_detailInline(admin.TabularInline):
     model = Contrat_detail
     can_delete = False
-
 
 class LicenceInline(admin.TabularInline):
     model = Licence
     can_delete = False
 
-
 @admin.register(Contrat)
 class ContratAdmin(admin.ModelAdmin):
     inlines = [Contrat_detailInline, LicenceInline]
     
+    list_display = ["get_num_contrat", "get_nom", "get_prenom", "created_by", "modified_by"]
+    
+    def get_num_contrat(self, obj):
+        return obj.num_contrat
+    get_num_contrat.admin_order_field  = 'num_contrat'  #Allows column order sorting
+    get_num_contrat.short_description = 'Numéro du contrat'  #Renames column head
+    
+    def get_nom(self, obj):
+        return obj.client.utilisateur.nom
+    get_nom.admin_order_field  = 'client__utilisateur__nom'  #Allows column order sorting
+    get_nom.short_description = 'Nom du client'  #Renames column head
+    
+    def get_prenom(self, obj):
+        return obj.client.utilisateur.prenom
+    get_prenom.admin_order_field  = 'client__utilisateur__prenom'  #Allows column order sorting
+    get_prenom.short_description = 'Prénom du client'  #Renames column head
+    
+    
+# Save models
+    def save_model(self, request, obj, form, change):
+        print("here1")
+        if change:
+            # print(obj.id_utilisateur, "obj.id_utilisateur")
+            print("here2")
+            obj.modified_by = str(request.user)
+            obj.modified_date = datetime.now()
+            print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
+        if not change:
+            print("here3")
+            obj.created_by = request.user
+            obj.created_date = datetime.now()
+            # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
+        
+        obj.save()
+
+# permet à l'utilisateur de voir uniquement les contrats qu'il a créés
+    def get_queryset(self, request):#obj
+        print("here11")
+        if request.user.is_superuser:
+            print("here22")
+            return Contrat.objects.all()
+        #elif Integrateur.utilisateur.email == request.user:
+            #emailtest = Contrat.client.employe.integrateur.utilisateur.email
+            #print("here33")
+        #else:
+            #print("empluser", Integrateur.objects.get(utilisateur=request.user))
+            #intInfo = Integrateur.objects.get(utilisateur=request.user)
+            #allentrINT = Integrateur.objects.all()
+            #allentrEMPL = Employe.objects.all()
+            #print(allentrINT, allentrEMPL)
+            """ for i in allentrINT:
+                if Employe.objects.get(utilisateur=i):
+                    print("ok") """
+        print("here44")    
+        return Contrat.objects.filter(created_by=request.user)
+
+
+    # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés
+    # Filter the "Utilisateur" field droplist to show only the users created by request.user
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        print("here111empl")
+        if db_field.name == "client" and request.user.is_superuser:
+            print("here222empl")
+            kwargs["queryset"] = Client.objects.all()
+        elif db_field.name == "client" and not request.user.is_superuser:
+            print("here333empl")
+            kwargs["queryset"] = Client.objects.filter(created_by=request.user)  # employe id_utilisateur
+        print("here444empl")
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+
+
+
 
 @admin.register(Resultat)
 class ResultatAdmin(admin.ModelAdmin):
