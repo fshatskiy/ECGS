@@ -43,10 +43,10 @@ class UserManager(BaseUserManager):
     
     
 class DateCrDateMod(models.Model):
-    created_date = models.DateTimeField(auto_now=True, editable=False)
-    modified_date = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
-    created_by = models.CharField(max_length=254, editable=False)
-    modified_by = models.CharField(max_length=254, editable=False, null=True, blank=True)
+    created_date = models.DateTimeField("créé le", auto_now=True, editable=False)
+    modified_date = models.DateTimeField("modifié le", auto_now=True, editable=False, null=True, blank=True)
+    created_by = models.CharField("créé par", max_length=254, editable=False)
+    modified_by = models.CharField("modifié par", max_length=254, editable=False, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -60,7 +60,7 @@ class Resultat(models.Model):
                                 )
     nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
     utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
-    date = models.DateTimeField(auto_now_add=True)#test
+    date = models.DateTimeField(auto_now=True)#test
     
     def __str__(self):
         return "%s" % (self.id_resultat)
@@ -75,7 +75,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
                                    editable=False)
     resultat = models.ForeignKey(Resultat,
                                 on_delete=models.CASCADE,
-                                null=True)
+                                null=True,
+                                verbose_name="résultat")
     email = models.EmailField(max_length=254, unique=True)
     nom = models.CharField(max_length=254)#changer lorsque register.html sera complet
     prenom = models.CharField(max_length=254)#changer lorsque register.html sera complet
@@ -84,7 +85,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    tel = models.CharField(max_length=20)#changer lorsque register.html sera complet
+    tel = models.CharField("téléphone",max_length=20)#changer lorsque register.html sera complet
     entreprise = models.CharField(max_length=200)#changer lorsque register.html sera complet
     fonction = models.CharField(max_length=200)#changer lorsque register.html sera complet
 
@@ -114,14 +115,14 @@ class Integrateur(DateCrDateMod):
                                    primary_key=True, 
                                    editable=False,
                                    max_length = 14)
-    tva_integrateur = models.CharField(max_length = 14)
+    tva_integrateur = models.CharField("tva",max_length = 14)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
-    adr_entreprise = models.CharField(max_length=254)
+    adr_entreprise = models.CharField("adresse de l'entreprise",max_length=254)
     #tva = models.CharField(max_length=14, unique=True)#international, unique
-    lieu_fonction = models.CharField(max_length=254)
-    tel_contact = models.CharField(max_length=20)
+    lieu_fonction = models.CharField("lieu de sa fonction",max_length=254)
+    tel_contact = models.CharField("téléphone de contact",max_length=20)
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
@@ -140,7 +141,7 @@ class Employe(DateCrDateMod):
                                 on_delete=models.CASCADE)
     integrateur = models.ForeignKey(Integrateur,
                                 on_delete=models.CASCADE)
-    lieu_fonction = models.CharField(max_length=254)
+    lieu_fonction = models.CharField("lieu de sa fonction", max_length=254)
         
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
@@ -152,16 +153,17 @@ class Client(DateCrDateMod):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    tva_cli = models.CharField(max_length = 14)
+    tva_cli = models.CharField("tva", max_length = 14)
     employe = models.ForeignKey(Employe,
                                 on_delete=models.CASCADE)
     utilisateur = models.OneToOneField(CustomUser,
                                           unique=True,
                                 on_delete=models.CASCADE)
-    adr_entreprise = models.CharField(max_length=254)
+    adr_entreprise = models.CharField("adresse de l'entreprise", max_length=254)
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
+    
 
 
 class Contrat(DateCrDateMod):
@@ -169,18 +171,15 @@ class Contrat(DateCrDateMod):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    num_contrat = models.CharField(max_length=254, null=False, blank=False, unique=True)
+    num_contrat = models.CharField("numéro du contrat", max_length=254, null=False, blank=False, unique=True)
     client = models.ForeignKey(Client, 
                                on_delete=models.CASCADE)
-    date_creation = models.DateField(null=False, blank=False, auto_now=True)
-    commentaires_contrat = models.CharField(max_length=250, null=True, blank=True)
+    #date_creation = models.DateField(null=False, blank=False, auto_now=True)
+    commentaires_contrat = models.CharField("commentaires", max_length=250, null=True, blank=True)
         
-    def __str__(self):
-        return "Numéro du contrat: %s | Nom: %s | Prenom: %s" % (self.num_contrat, self.client.utilisateur.nom, self.client.utilisateur.prenom)
+    """ def __str__(self):
+        return "Numéro du contrat: %s | Nom: %s | Prenom: %s" % (self.num_contrat, self.client.utilisateur.nom, self.client.utilisateur.prenom) """
     
-        
-    def __str__(self):
-        return "Numéro du contrat : ontrat : %s %s" % (self.contrat, self.statut)
     
 class Contrat_detail(models.Model):
     STATUT = (
@@ -194,7 +193,7 @@ class Contrat_detail(models.Model):
     contrat = models.OneToOneField(Contrat, 
                                on_delete=models.CASCADE)
     statut = models.CharField(max_length=200, choices=STATUT)
-    date_signature = models.DateField(null=True, blank=True)
+    date_signature = models.DateField("date", null=True, blank=True)
 
 
 class Licence(models.Model):
@@ -202,14 +201,11 @@ class Licence(models.Model):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    num_licence = models.CharField(max_length=254, null=False, blank=False, unique=True)
+    num_licence = models.CharField("numéro licence", max_length=254, null=False, blank=False, unique=True)
     contrat = models.ForeignKey(Contrat, 
                                on_delete=models.CASCADE)
-    date_achat = models.DateField()
-    nombre = models.PositiveIntegerField()
+    date_achat = models.DateField("date d'achat de licence", )
+    nombre = models.PositiveIntegerField("nombre de licences", )
     type = models.CharField(max_length=250)
-    commentaires_lic = models.CharField(max_length=250, null=True, blank=True)
-    
-    def __str__(self):
-        return "%s %s" % (self.num_licence, self.contrat)
+    commentaires_lic = models.CharField("commentaires", max_length=250, null=True, blank=True)
     
