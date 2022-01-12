@@ -439,22 +439,38 @@ class ClientAdmin(admin.ModelAdmin):
         
         obj.save()
         
-# permet à l'utilisateur de voir uniquement les contrats qu'il a créés
+# permet à l'intégrateur de voir uniquement les clients qu'il a créés
     def get_queryset(self, request):
         print("here11")
+        # si l'user est admin, afficher tous les objets
         if request.user.is_superuser:
             print("here22")
             return Client.objects.all()
-        else:
-            # Affiche les clients créés par les employés provenant d'un MEME intégrateur
+        
+        #sinon si current user est l'utilisateur employé,
+        #afficher les clients créés par lui même
+            """ elif Employe.objects.filter(utilisateur=request.user).exists() and request.user == Employe.objects.filter(utilisateur=request.user):
+            print("premier elif")
+            return Client.objects.filter(created_by=request.user) """
+        
+        # sinon, 
+        # Affiche les clients créés par les employés provenant d'un MEME intégrateur (de la même entreprise)
+        #permet d'afficher les clients si vous etes connecté en tant qu'integrateur
+        elif Employe.objects.filter(created_by = request.user).exists():#vérifie si le créateur des employés est l'user courant (= intégrateur)
+            # ne rentre jms dans la codition si on est connectés en tant qu'employé
+            print("test : ", Employe.objects.filter(utilisateur=request.user).exists())
+            print("bool : ", Employe.objects.filter(created_by = request.user).exists())#True
+            print("deuxieme elif")
             for i in Employe.objects.filter(created_by = request.user):
                 print("employés : ", i.utilisateur.email)
-                mail = i.utilisateur.email
-                e = Client.objects.filter(created_by = mail)
+                mailInt = i.utilisateur.email
+                e = Client.objects.filter(created_by = mailInt)
                 print("clients : ", e)
-            print("clients créés par les employeurs d'un même intégrateur : ", Client.objects.filter(created_by = mail))
-            return Client.objects.filter(created_by=mail)
-        #AFFICHER LES CLIENTS CREES PAR LES EMPLOYES CONNECTES MNT
+            print("clients créés par les employeurs d'un même intégrateur : ", Client.objects.filter(created_by = mailInt))
+            return Client.objects.filter(created_by=mailInt)
+        
+        print("fin")
+        return Client.objects.filter(created_by=request.user)
     
 
     # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés
@@ -518,6 +534,7 @@ class ClientAdmin(admin.ModelAdmin):
                                                     Inlines : permet de regrouper plusieurs models en un dans la page Django Admin.
                                                     """
 
+
 """         CONTRAT       """
 class Contrat_detailInline(admin.TabularInline):
     model = Contrat_detail
@@ -566,25 +583,49 @@ class ContratAdmin(admin.ModelAdmin):
         
         obj.save()
 
-# permet à l'utilisateur de voir uniquement les contrats qu'il a créés
-    def get_queryset(self, request):#obj
-        print("here11")
+# permet à l'intégrateur de voir uniquement les clients qu'il a créés
+    def get_queryset(self, request):
+        print("here11Contrat")
+        # si l'user est admin, afficher tous les objets
         if request.user.is_superuser:
-            print("here22")
+            print("here22Contrat")
             return Contrat.objects.all()
-        #elif Integrateur.utilisateur.email == request.user:
-            #emailtest = Contrat.client.employe.integrateur.utilisateur.email
-            #print("here33")
-        #else:
-            #print("empluser", Integrateur.objects.get(utilisateur=request.user))
-            #intInfo = Integrateur.objects.get(utilisateur=request.user)
-            #allentrINT = Integrateur.objects.all()
-            #allentrEMPL = Employe.objects.all()
-            #print(allentrINT, allentrEMPL)
-            """ for i in allentrINT:
-                if Employe.objects.get(utilisateur=i):
-                    print("ok") """
-        print("here44")    
+        
+        #sinon si current user est l'utilisateur employé,
+        #afficher les clients créés par lui même
+            """ elif Employe.objects.filter(utilisateur=request.user).exists() and request.user == Employe.objects.filter(utilisateur=request.user):
+            print("premier elif")
+            return Client.objects.filter(created_by=request.user) """
+        
+        # sinon, 
+        # Affiche les clients créés par les employés provenant d'un MEME intégrateur (de la même entreprise)
+        #permet d'afficher les clients si vous etes connecté en tant qu'integrateur
+        elif Employe.objects.filter(created_by = request.user).exists():#vérifie si le créateur des employés est l'user courant (= intégrateur)
+            # ne rentre jms dans la codition si on est connectés en tant qu'employé
+            print("Contratbool : ", Employe.objects.filter(created_by = request.user).exists())#True
+            print("Contratdeuxieme elif")
+            list = []
+            tab = []
+            tab_none_values = []
+            for i in Employe.objects.filter(created_by = request.user):
+                print("employés : ", i.utilisateur.email)
+                mailInt = i.utilisateur.email
+                print("Contrat : ", Contrat.objects.filter(created_by = mailInt))
+                m = Contrat.objects.filter(created_by = mailInt)
+                list.append(mailInt)
+            for x in list:
+                tab.append(Contrat.objects.filter(created_by=x))
+                """ if tab[key] is None:
+                    print("pop")
+                    tab.pop(key) """
+                tab_none_values = filter(None.__ne__, tab)
+                tab = tab_none_values
+            print("tab : ", tab)
+            print("list", list)
+            #print("Contrats créés par les employeurs d'un même intégrateur : ", Contrat.objects.filter(created_by = tab))
+            return tab
+        
+        print("Contratfin")
         return Contrat.objects.filter(created_by=request.user)
 
 
