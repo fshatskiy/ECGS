@@ -10,9 +10,9 @@ from .models import (
     Licence,
 )
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
-from django import forms
 
 # Register your models here.
 
@@ -87,7 +87,7 @@ class CustomUserAdmin(DjangoUserAdmin):
                 "user_permissions",
             )
         else:
-            perm_fields = ("is_active", "is_staff", "groups")
+            perm_fields = ("is_active", "is_staff", "groups")#groups a enlever
 
         return [
             (None, {"fields": ("email", "password")}),
@@ -116,8 +116,8 @@ class CustomUserAdmin(DjangoUserAdmin):
         print("here4")
         obj.save()
 
-        # permet à l'user de voir uniquement les utilisateurs qu'il a créées DANS UTILISATEURS : pour tout le monde
 
+    # permet à l'user de voir uniquement les utilisateurs qu'il a créées DANS UTILISATEURS
     def get_queryset(self, request):
         print("here11")
         if request.user.is_superuser:
@@ -127,36 +127,6 @@ class CustomUserAdmin(DjangoUserAdmin):
         print("CustomUserADMIN filtre")
         return CustomUser.objects.filter(created_by=request.user)
 
-    """ def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return ['entreprise', 'date_joined', 'is_active', 'is_staff', 'is_superuser']
-        else:
-            return ['date_joined', 'is_active', 'is_staff'] """
-
-
-# admin.site.unregister(CustomUser, CustomUserAdmin)
-# admin.site.register(CustomUser, CustomUserAdmin)
-
-# custom colonnes - essayer d'utiliser : Integrateur.nom
-""" @admin.display(description='Nom intégrateur')
-def nom_int(obj):
-    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom)
-
-@admin.display(description='Entreprise')
-def int_entr(obj):
-    return obj.id_utilisateur.entreprise
-
-@admin.display(description='Nom employé')
-def nom_empl(obj):
-    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom)
-
-@admin.display(description='Entreprise')
-def empl_entr(obj):
-    return obj.id_utilisateur.entreprise
-
-@admin.display(description='Nom client')
-def nom_client(obj):
-    return "%s %s"%(obj.id_utilisateur.nom, obj.id_utilisateur.prenom) """
 
 
 @admin.register(Integrateur)
@@ -207,28 +177,33 @@ class IntegrateurAdmin(admin.ModelAdmin):
             print(obj.created_by, "obj.created_by de save_model => IntegrateurAdmin")
         print("here4")
         obj.save()
+        """ groupInt = Group.objects.get(name='INTEGRATEURS')
+        groupEmpl = Group.objects.get(name='EMPLOYES')
+        groupCli = Group.objects.get(name='CLIENTS')
+        print("obj", Integrateur)
+        groupInt.user_set.add(obj.pk)
+        print(obj.pk)
+        print("groupint :", groupInt)
+        groupInt.save() """
+        """ if Integrateur == "Integrateur":
+            print("GROUPhere1")
+            obj.groups.add(groupInt)
+        elif obj == "Employe":
+            print("GROUPhere2")
+            obj.groups.add(groupEmpl)
+        elif obj == "Client":
+            print("GROUPhere3")
+            obj.groups.add(groupCli) """
+        #print(obj.groupInt)
 
-    # permet à l'user de voir uniquement les utilisateurs qu'il a créées    , osef car integrateur : il n'a pas accès aux integrateurs de toute facon
-    """ def get_queryset(self, request):
+    # permet à l'admin de voir les intégrateurs créés
+    def get_queryset(self, request):
         print("here11")
         if request.user.is_superuser:
             print("here22")
             return Integrateur.objects.all()
         print("here33")
-        print("INTEGRATEURADMIN filtre")
-        return Integrateur.objects.filter(created_by=request.user) """
-
-    # ne sert à rien ? car lorsque je me co en tant qu'int, je n'ai pas besoin de créer d'autres int.
-    """ def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        print("here111int")
-        if db_field.name == "integrateur" and request.user.is_superuser:
-            print("here222int")
-            kwargs["queryset"] = Integrateur.objects.all()
-        elif db_field.name == "integrateur" and not request.user.is_superuser:
-            print("here333int")
-            kwargs["queryset"] = Integrateur.objects.filter(created_by=request.user)#employe id_utilisateur
-        print("here444int")
-        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
+        return Integrateur.objects.filter(created_by=request.user)#ne rentrera jamais dedans tant que les GROUPES sont mis en place
 
     """def get_list_filter(self, request):
         if request.user.is_superuser:
@@ -241,29 +216,6 @@ class IntegrateurAdmin(admin.ModelAdmin):
             return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
         else:
             return []  """
-
-
-""" 
-class CustomUserAdmin(admin.ModelAdmin):
-    exclude = ('id_utilisateur',)#to not be able to change it manually
-    list_display = ('nom', 'prenom', 'email', 'tel', 'entreprise', 'fonction', 'date_joined', 'id_utilisateur')
-    
-    def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return ['entreprise', 'date_joined']
-        else:
-            return ['date_joined'] """
-
-"""Cleaning data and raising errors for Employe Model"""
-""" class EmployeForm(forms.ModelForm):
-    class Meta:
-        model = Employe
-        fields = '__all__'
-    def equals_entreprise(self):
-        entreprise = self.cleaned_data['entreprise']
-        if Employe.utilisateur.entreprise != Employe.integrateur.utilisateur.entreprise:
-            raise forms.ValidationError("Le nom de l'entreprise ne correspond pas avec celui de votre intégrateur")
-        return entreprise """
 
 
 @admin.register(Employe)
@@ -349,28 +301,14 @@ class EmployeAdmin(admin.ModelAdmin):
             kwargs["queryset"] = CustomUser.objects.all()
         elif db_field.name == "utilisateur" and not request.user.is_superuser:
             print("here333empl")
-            kwargs["queryset"] = CustomUser.objects.filter(
-                created_by=request.user
-            )  # employe id_utilisateur
+            kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)
         elif db_field.name == "integrateur" and not request.user.is_superuser:
             print("here333empl")
-            print("test création Employe :", Integrateur.objects.filter(utilisateur=request.user))
+            #print("test création Employe :", Integrateur.objects.filter(utilisateur=request.user))
             kwargs["queryset"] = Integrateur.objects.filter(utilisateur=request.user)
         print("here444empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    # trouver comment choisir automatiquement request.user au champ integrateur même s'il est caché/read-only. Si r-o, alors il ne tient plus compte du initial
-    """ def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        print("droplistforfk enter")
-        if db_field.name == "integrateur":
-            kwargs["initial"] = Integrateur.objects.filter(
-                utilisateur=request.user
-            )  # choix initial (le "-------" est remplacé)
-            print("2e fonction bon")
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs) """
-
-    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
 
     """ def get_list_filter(self, request):
         if request.user.is_superuser:
@@ -390,7 +328,7 @@ class EmployeAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by"]
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date"]
     
     def get_nom(self, obj):
         return obj.utilisateur.nom
@@ -439,37 +377,34 @@ class ClientAdmin(admin.ModelAdmin):
         
         obj.save()
         
-# permet à l'intégrateur de voir uniquement les clients qu'il a créés
+# permet d'afficher les objets selon l'utilisateur connecté :
+#admin : peut voir tous les objets, créés par tout le monde
+#intégrateur : peut uniquement voir les objets créés par ses employés
+#employé : peut voir les objets qu'il a créé uniquement
     def get_queryset(self, request):
-        print("here11")
+        print("here11Client")
         # si l'user est admin, afficher tous les objets
         if request.user.is_superuser:
-            print("here22")
+            print("here22Client")
             return Client.objects.all()
         
-        #sinon si current user est l'utilisateur employé,
-        #afficher les clients créés par lui même
-            """ elif Employe.objects.filter(utilisateur=request.user).exists() and request.user == Employe.objects.filter(utilisateur=request.user):
-            print("premier elif")
-            return Client.objects.filter(created_by=request.user) """
+        # sinon si, l'utilisateur connecté est un intégrateur,
+        # Affiche les objets créés par le personnel de l'intégrateur connecté (de la même entreprise)
+        elif Employe.objects.filter(created_by = request.user).exists():
+            # (ne rentre jms dans la codition si on est connectés en tant qu'employé)
+            """ print("Clientdeuxieme elif")
+            n=[]
+            test=Employe.objects.values_list('utilisateur__email', flat=True).filter(created_by=request.user)
+            print("test : ", test)
+            for i in test:
+                n += Client.objects.filter(created_by=i)
+                print ("n : ", n)
+            print("final n : ", n)
+            print(Client.objects.filter(employe__created_by=request.user)) """
+            return Client.objects.filter(employe__created_by=request.user)
         
-        # sinon, 
-        # Affiche les clients créés par les employés provenant d'un MEME intégrateur (de la même entreprise)
-        #permet d'afficher les clients si vous etes connecté en tant qu'integrateur
-        elif Employe.objects.filter(created_by = request.user).exists():#vérifie si le créateur des employés est l'user courant (= intégrateur)
-            # ne rentre jms dans la codition si on est connectés en tant qu'employé
-            print("test : ", Employe.objects.filter(utilisateur=request.user).exists())
-            print("bool : ", Employe.objects.filter(created_by = request.user).exists())#True
-            print("deuxieme elif")
-            for i in Employe.objects.filter(created_by = request.user):
-                print("employés : ", i.utilisateur.email)
-                mailInt = i.utilisateur.email
-                e = Client.objects.filter(created_by = mailInt)
-                print("clients : ", e)
-            print("clients créés par les employeurs d'un même intégrateur : ", Client.objects.filter(created_by = mailInt))
-            return Client.objects.filter(created_by=mailInt)
-        
-        print("fin")
+        print("Clientfin")
+        #sinon affiche les objets créés par uniquement l'employé connecté
         return Client.objects.filter(created_by=request.user)
     
 
@@ -508,7 +443,7 @@ class ClientAdmin(admin.ModelAdmin):
         return obj.id_employe
     list_display = (nom_client, 'id_employe', 'adr_entreprise', 'num_contrat', 'num_licence', 'statut', 'id_utilisateur')"""
 
-    # permet à l'utilisateur de voir uniquement les CustomUsers qu'il a  créées
+
     """
     
     def get_list_filter(self, request):
@@ -530,12 +465,10 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 
-"""
-                                                    Inlines : permet de regrouper plusieurs models en un dans la page Django Admin.
-                                                    """
+"""             INLINES : permet de regrouper les modèles souhaités sur une même page du portail admin             """
 
 
-"""         CONTRAT       """
+"""         CONTRAT  utilisant Inlines     """
 class Contrat_detailInline(admin.TabularInline):
     model = Contrat_detail
     can_delete = False
@@ -544,11 +477,12 @@ class LicenceInline(admin.TabularInline):
     model = Licence
     can_delete = False
 
+# modèle principal qui reprend ceux du dessus
 @admin.register(Contrat)
 class ContratAdmin(admin.ModelAdmin):
     inlines = [Contrat_detailInline, LicenceInline]
     
-    list_display = ["get_num_contrat", "get_nom", "get_prenom", "created_by", "modified_by"]
+    list_display = ["get_num_contrat", "get_nom", "get_prenom", "created_by", "created_date", "modified_by","modified_date"]
     
     def get_num_contrat(self, obj):
         return obj.num_contrat
@@ -567,6 +501,8 @@ class ContratAdmin(admin.ModelAdmin):
     
     
 # Save models
+# En cas de modification, enregistre les données : modifié par et la date
+# En cas de création, enregistre les données : créé par et la date
     def save_model(self, request, obj, form, change):
         print("here1")
         if change:
@@ -583,7 +519,10 @@ class ContratAdmin(admin.ModelAdmin):
         
         obj.save()
 
-# permet à l'intégrateur de voir uniquement les clients qu'il a créés
+# permet d'afficher les objets selon l'utilisateur connecté :
+#admin : peut voir tous les objets, créés par tout le monde
+#intégrateur : peut uniquement voir les objets créés par ses employés
+#employé : peut voir les objets qu'il a créé uniquement
     def get_queryset(self, request):
         print("here11Contrat")
         # si l'user est admin, afficher tous les objets
@@ -591,41 +530,23 @@ class ContratAdmin(admin.ModelAdmin):
             print("here22Contrat")
             return Contrat.objects.all()
         
-        #sinon si current user est l'utilisateur employé,
-        #afficher les clients créés par lui même
-            """ elif Employe.objects.filter(utilisateur=request.user).exists() and request.user == Employe.objects.filter(utilisateur=request.user):
-            print("premier elif")
-            return Client.objects.filter(created_by=request.user) """
-        
-        # sinon, 
-        # Affiche les clients créés par les employés provenant d'un MEME intégrateur (de la même entreprise)
-        #permet d'afficher les clients si vous etes connecté en tant qu'integrateur
-        elif Employe.objects.filter(created_by = request.user).exists():#vérifie si le créateur des employés est l'user courant (= intégrateur)
-            # ne rentre jms dans la codition si on est connectés en tant qu'employé
-            print("Contratbool : ", Employe.objects.filter(created_by = request.user).exists())#True
-            print("Contratdeuxieme elif")
-            list = []
-            tab = []
-            tab_none_values = []
-            for i in Employe.objects.filter(created_by = request.user):
-                print("employés : ", i.utilisateur.email)
-                mailInt = i.utilisateur.email
-                print("Contrat : ", Contrat.objects.filter(created_by = mailInt))
-                m = Contrat.objects.filter(created_by = mailInt)
-                list.append(mailInt)
-            for x in list:
-                tab.append(Contrat.objects.filter(created_by=x))
-                """ if tab[key] is None:
-                    print("pop")
-                    tab.pop(key) """
-                tab_none_values = filter(None.__ne__, tab)
-                tab = tab_none_values
-            print("tab : ", tab)
-            print("list", list)
-            #print("Contrats créés par les employeurs d'un même intégrateur : ", Contrat.objects.filter(created_by = tab))
-            return tab
+        # sinon si, l'utilisateur connecté est un intégrateur,
+        # Affiche les contrats créés par le personnel de l'intégrateur connecté (de la même entreprise)
+        elif Employe.objects.filter(created_by = request.user).exists():
+            # (ne rentre jms dans la codition si on est connectés en tant qu'employé)
+            """ print("Contratdeuxieme elif")
+            n=[]
+            test=Employe.objects.values_list('utilisateur__email', flat=True).filter(created_by=request.user)
+            print("test : ", test)
+            for i in test:
+                n += Contrat.objects.filter(created_by=i)
+                print ("n : ", n)
+            print("final n : ", n)
+            print(Contrat.objects.filter(client__employe__created_by=request.user)) """
+            return Contrat.objects.filter(client__employe__created_by=request.user)
         
         print("Contratfin")
+        #sinon affiche les contrats créés par uniquement l'employé connecté
         return Contrat.objects.filter(created_by=request.user)
 
 
