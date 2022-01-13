@@ -43,8 +43,8 @@ class UserManager(BaseUserManager):
     
     
 class DateCrDateMod(models.Model):
-    created_date = models.DateTimeField("créé le", auto_now=True, editable=False)
-    modified_date = models.DateTimeField("modifié le", auto_now=True, editable=False, null=True, blank=True)
+    created_date = models.DateTimeField("créé le", editable=False)
+    modified_date = models.DateTimeField("modifié le", editable=False, null=True, blank=True)
     created_by = models.CharField("créé par", max_length=254, editable=False)
     modified_by = models.CharField("modifié par", max_length=254, editable=False, null=True, blank=True)
 
@@ -183,8 +183,10 @@ class Contrat(DateCrDateMod):
     
 class Contrat_detail(models.Model):
     STATUT = (
+        ('Proposition', 'Proposition'),
+        ('En négociation', 'En négociation'),
         ('Signé', 'Signé'),
-        ('En Attente', 'En Attente'),
+        ('Arrêté', 'Arrêté'),
     )
     id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 

@@ -15,6 +15,7 @@ import os
 import environ
 #import pydot
 from django.contrib.messages import constants as messages
+from django.utils.translation import gettext_lazy as _
 
 
 env = environ.Env()
@@ -126,15 +127,28 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-BE'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Brussels'
 
+# Utiles pour la traduction et le formattage des données
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
+
+TIME_INPUT_FORMATS = [
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M:%S.%f',  # '14:30:59.000200'
+    '%H:%M',        # '14:30'
+]
+
+""" LANGUAGES = [
+  ('fr', _('French')),
+  ('en', _('English')),
+  ('ru', _('Russian')),
+] """
 
 LOGIN_URL = 'login'
 

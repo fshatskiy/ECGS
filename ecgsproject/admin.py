@@ -12,7 +12,7 @@ from .models import (
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
-from datetime import datetime
+from django.utils import timezone
 
 # Register your models here.
 
@@ -57,6 +57,7 @@ class CustomUserAdmin(DjangoUserAdmin):
         "is_staff",
         "created_date",
         "created_by",
+        "modified_date"
     )  #
     list_filter = (
         "entreprise",
@@ -106,12 +107,12 @@ class CustomUserAdmin(DjangoUserAdmin):
             obj.modified_by = str(
                 request.user
             )  # request.user est une adr email, str() le force à etre charField
-            obj.modified_date = datetime.now()
+            obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => CustomUserAdmin")
         if not change:
             print("here3")
             obj.created_by = request.user
-            obj.created_date = datetime.now()
+            obj.created_date = timezone.now()
             print(obj.created_by, "obj.created_by de save_model => CustomUserAdmin")
         print("here4")
         obj.save()
@@ -132,7 +133,7 @@ class CustomUserAdmin(DjangoUserAdmin):
 @admin.register(Integrateur)
 class IntegrateurAdmin(admin.ModelAdmin):
     
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_integrateur"]
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_integrateur", "created_by", "created_date", "modified_date"]
     
     
     def get_nom(self, obj):
@@ -168,12 +169,12 @@ class IntegrateurAdmin(admin.ModelAdmin):
             obj.modified_by = str(
                 request.user
             )  # request.user est une adr email, str() le force à etre charField
-            obj.modified_date = datetime.now()
+            obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => IntegrateurAdmin")
         if not change:
             print("here3")
             obj.created_by = request.user
-            obj.created_date = datetime.now()
+            obj.created_date = timezone.now()
             print(obj.created_by, "obj.created_by de save_model => IntegrateurAdmin")
         print("here4")
         obj.save()
@@ -222,7 +223,7 @@ class IntegrateurAdmin(admin.ModelAdmin):
 class EmployeAdmin(admin.ModelAdmin):
     # readonly_fields = ('integrateur',)#to not be able to change it manually
 
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "created_by" ]
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "created_by", "created_date", "modified_date"]
     
     #form = EmployeForm #lien vers le formulaire
     
@@ -262,7 +263,7 @@ class EmployeAdmin(admin.ModelAdmin):
             #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
             #print("MODIF j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.modified_by = str(request.user)
-            obj.modified_date = datetime.now()
+            obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
         if not change:
             print("here3")
@@ -271,7 +272,7 @@ class EmployeAdmin(admin.ModelAdmin):
             #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
             #print("CREATION j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.created_by = request.user
-            obj.created_date = datetime.now()
+            obj.created_date = timezone.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
         """ print(request.user, " : integrateur = request.user")
         obj.integrateur_id = request.user
@@ -328,7 +329,7 @@ class EmployeAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date"]
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date", "modified_date"]
     
     def get_nom(self, obj):
         return obj.utilisateur.nom
@@ -367,12 +368,12 @@ class ClientAdmin(admin.ModelAdmin):
             # print(obj.id_utilisateur, "obj.id_utilisateur")
             print("here2")
             obj.modified_by = str(request.user)
-            obj.modified_date = datetime.now()
+            obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
         if not change:
             print("here3")
             obj.created_by = request.user
-            obj.created_date = datetime.now()
+            obj.created_date = timezone.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
         
         obj.save()
@@ -482,7 +483,7 @@ class LicenceInline(admin.TabularInline):
 class ContratAdmin(admin.ModelAdmin):
     inlines = [Contrat_detailInline, LicenceInline]
     
-    list_display = ["get_num_contrat", "get_nom", "get_prenom", "created_by", "created_date", "modified_by","modified_date"]
+    list_display = ["get_num_contrat", "get_nom", "get_statut", "created_by", "get_int", "created_date", "modified_by", "modified_date"]
     
     def get_num_contrat(self, obj):
         return obj.num_contrat
@@ -490,14 +491,20 @@ class ContratAdmin(admin.ModelAdmin):
     get_num_contrat.short_description = 'Numéro du contrat'  #Renames column head
     
     def get_nom(self, obj):
-        return obj.client.utilisateur.nom
-    get_nom.admin_order_field  = 'client__utilisateur__nom'  #Allows column order sorting
-    get_nom.short_description = 'Nom du client'  #Renames column head
+        concat = obj.client.utilisateur.nom + " " + obj.client.utilisateur.prenom
+        return concat
+    get_nom.short_description = 'Client'  #Renames column head
     
-    def get_prenom(self, obj):
-        return obj.client.utilisateur.prenom
-    get_prenom.admin_order_field  = 'client__utilisateur__prenom'  #Allows column order sorting
-    get_prenom.short_description = 'Prénom du client'  #Renames column head
+    def get_int(self, obj):
+        return obj.client.employe.utilisateur.entreprise
+    get_int.admin_order_field  = 'client__employe__utilisateur__entreprise'  #Allows column order sorting
+    get_int.short_description = 'Intégrateur'  #Renames column head
+    
+    def get_statut(self, obj):
+        return obj.contrat_detail.statut
+    get_statut.admin_order_field  = 'contrat_detail__statut'  #Allows column order sorting
+    get_statut.short_description = 'Statut'  #Renames column head
+    
     
     
 # Save models
@@ -509,12 +516,12 @@ class ContratAdmin(admin.ModelAdmin):
             # print(obj.id_utilisateur, "obj.id_utilisateur")
             print("here2")
             obj.modified_by = str(request.user)
-            obj.modified_date = datetime.now()
+            obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
         if not change:
             print("here3")
             obj.created_by = request.user
-            obj.created_date = datetime.now()
+            obj.created_date = timezone.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
         
         obj.save()
@@ -571,3 +578,4 @@ class ContratAdmin(admin.ModelAdmin):
 @admin.register(Resultat)
 class ResultatAdmin(admin.ModelAdmin):
     list_display = ["id_resultat", "nb_h_tot_prest_ann"]
+    readonly_fields = ["id_resultat", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
