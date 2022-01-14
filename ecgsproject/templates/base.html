@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,36 +63,31 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto " href="#hero">Home</a></li>
-          <li><a class="nav-link scrollto" href="#about">About</a></li>
-          <li><a class="nav-link scrollto" href="#services">Services</a></li>
-          <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
-          <li><a class="nav-link scrollto" href="#team">Team</a></li>
-          <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
+          <li><a class="nav-link scrollto " href="#hero">{% trans 'Accueil' %}</a></li>
+          <li><a class="nav-link scrollto" href="#about">{% trans 'À propos' %}</a></li>
+          <li><a class="nav-link scrollto" href="#services">{% trans 'Services' %}</a></li>
+          <li><a class="nav-link scrollto " href="#portfolio">{% trans 'Portfolio' %}</a></li>
+          <li><a class="nav-link scrollto" href="#team">{% trans 'Équipe' %}</a></li>
+          <li class="dropdown"><a href="#"><span>Langues</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a href="#">Drop Down 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                <ul>
-                  <li><a href="#">Deep Drop Down 1</a></li>
-                  <li><a href="#">Deep Drop Down 2</a></li>
-                  <li><a href="#">Deep Drop Down 3</a></li>
-                  <li><a href="#">Deep Drop Down 4</a></li>
-                  <li><a href="#">Deep Drop Down 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Drop Down 2</a></li>
-              <li><a href="#">Drop Down 3</a></li>
-              <li><a href="#">Drop Down 4</a></li>
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as LANGUAGES %}
+              {% get_language_info_list for LANGUAGES as languages %}
+
+              
+              {% for lang in languages %}
+                <li><a href="/{{ lang.code }}/">{{ lang.name_local }}</a></li>
+              {% endfor %}
             </ul>
           </li>
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
           {% if request.user.is_authenticated %}
           <li><b class="nav-link scrollto">{{request.user}}</b></li>
-          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'logout' %}">Se déconnecter</a></li>
-          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'admin' %}">Portail</a></li>
+          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'logout' %}">{% trans 'Se déconnecter' %}</a></li>
+          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'admin' %}">{% trans 'Portail' %}</a></li>
           {% else %}
-          <li><a class="getstarted scrollto" href="{% url 'register' %}">Devenir membre</a></li>
-          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
+          <li><a class="getstarted scrollto" href="{% url 'register' %}">{% trans 'Devenir membre' %}</a></li>
+          <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'login' %}">{% trans 'Se connecter' %}</a></li>
           {% endif %}
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>

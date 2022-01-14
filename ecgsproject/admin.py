@@ -577,5 +577,28 @@ class ContratAdmin(admin.ModelAdmin):
 
 @admin.register(Resultat)
 class ResultatAdmin(admin.ModelAdmin):
-    list_display = ["id_resultat", "nb_h_tot_prest_ann"]
-    readonly_fields = ["id_resultat", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
+    list_display = ["get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
+    #ACTIVER APRES + ne surtout pas laisser le champ "utilisateur" utilisable
+    readonly_fields = ["utilisateur", "get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
+    
+    def get_nom(self, obj):
+        concat = obj.utilisateur.nom + " " + obj.utilisateur.prenom
+        return concat
+    get_nom.short_description = 'Client potentiel'  #Renames column head
+    
+    def get_email(self, obj):
+        return obj.utilisateur.email
+    get_email.admin_order_field  = 'utilisateur__email'  #Allows column order sorting
+    get_email.short_description = 'Adresse email'  #Renames column head
+        
+    def get_tel(self, obj):
+        return obj.utilisateur.tel
+    get_tel.admin_order_field  = 'utilisateur__tel'  #Allows column order sorting
+    get_tel.short_description = 'Téléphone'  #Renames column head
+    
+    def get_entreprise(self, obj):
+        return obj.utilisateur.entreprise
+    get_entreprise.admin_order_field  = 'utilisateur__entreprise'  #Allows column order sorting
+    get_entreprise.short_description = 'Entreprise'  #Renames column head
+    
+    #Save_model : dans view ?

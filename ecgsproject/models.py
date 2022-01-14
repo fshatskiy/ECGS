@@ -2,7 +2,8 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 
 
 # Create your models here.
@@ -43,27 +44,14 @@ class UserManager(BaseUserManager):
     
     
 class DateCrDateMod(models.Model):
-    created_date = models.DateTimeField("créé le", editable=False)
-    modified_date = models.DateTimeField("modifié le", editable=False, null=True, blank=True)
-    created_by = models.CharField("créé par", max_length=254, editable=False)
-    modified_by = models.CharField("modifié par", max_length=254, editable=False, null=True, blank=True)
+    created_date = models.DateTimeField(_("créé le"), editable=False)
+    modified_date = models.DateTimeField(_("modifié le"), editable=False, null=True, blank=True)
+    created_by = models.CharField(_("créé par"), max_length=254, editable=False)
+    modified_by = models.CharField(_("modifié par"), max_length=254, editable=False, null=True, blank=True)
 
     class Meta:
         abstract = True
 
-
-class Resultat(models.Model):
-    id_resultat = models.UUIDField(default=uuid.uuid4, 
-                                unique=True, 
-                                primary_key=True, 
-                                editable=False
-                                )
-    nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
-    utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
-    date = models.DateTimeField(auto_now=True)#test
-    
-    def __str__(self):
-        return "%s" % (self.id_resultat)
     
 """
     Personne
@@ -73,10 +61,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
                                    unique=True, 
                                    primary_key=True, 
                                    editable=False)
-    resultat = models.ForeignKey(Resultat,
-                                on_delete=models.CASCADE,
-                                null=True,
-                                verbose_name="résultat")
     email = models.EmailField(max_length=254, unique=True)
     nom = models.CharField(max_length=254)#changer lorsque register.html sera complet
     prenom = models.CharField(max_length=254)#changer lorsque register.html sera complet
@@ -85,7 +69,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    tel = models.CharField("téléphone",max_length=20)#changer lorsque register.html sera complet
+    tel = models.CharField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
     entreprise = models.CharField(max_length=200)#changer lorsque register.html sera complet
     fonction = models.CharField(max_length=200)#changer lorsque register.html sera complet
 
@@ -99,15 +83,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
         return "/users/%i/" % (self.pk)
     def get_email(self):
         return self.email
-    def only_int(tel):
-        if tel.isdigit()==False:
-            # ValidationError ne foctionne pas
-            raise ('Le numéro de téléphone contient des caractères')#à vérifier
+
     class Meta:
         db_table = 'ecgsproject_customuser'
         # Add verbose name
-        verbose_name_plural = 'Utilisateurs'
+        verbose_name_plural = _('Utilisateurs')
 
+class Resultat(models.Model):
+    id_resultat = models.UUIDField(default=uuid.uuid4, 
+                                unique=True, 
+                                primary_key=True, 
+                                editable=False
+                                )
+    utilisateur = models.OneToOneField(CustomUser, #onetoonefield
+                                    on_delete=models.CASCADE,
+                                    unique=True)
+    nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
+    utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
+    date = models.DateTimeField(auto_now=True)#test
+    
+    def __str__(self):
+        return "%s" % (self.id_resultat)
 
 class Integrateur(DateCrDateMod):
     id_integrateur = models.UUIDField(default=uuid.uuid4, 
@@ -115,21 +111,17 @@ class Integrateur(DateCrDateMod):
                                    primary_key=True, 
                                    editable=False,
                                    max_length = 14)
-    tva_integrateur = models.CharField("tva",max_length = 14)
+    tva_integrateur = models.CharField(_("tva"),max_length = 14)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
-    adr_entreprise = models.CharField("adresse de l'entreprise",max_length=254)
+    adr_entreprise = models.CharField(_("adresse de l'entreprise"),max_length=254)
     #tva = models.CharField(max_length=14, unique=True)#international, unique
-    lieu_fonction = models.CharField("lieu de sa fonction",max_length=254)
-    tel_contact = models.CharField("téléphone de contact",max_length=20)
+    lieu_fonction = models.CharField(_("lieu de sa fonction"),max_length=254)
+    tel_contact = models.CharField(_("téléphone de contact"),max_length=20)
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
-    def only_int(tel_contact):
-        # ValidationError ne foctionne pas
-        if tel_contact.isdigit()==False:
-            raise ValidationError('Le numéro de téléphone contient des caractères')
     
 class Employe(DateCrDateMod):
     id_employe = models.UUIDField(default=uuid.uuid4, 
@@ -141,7 +133,7 @@ class Employe(DateCrDateMod):
                                 on_delete=models.CASCADE)
     integrateur = models.ForeignKey(Integrateur,
                                 on_delete=models.CASCADE)
-    lieu_fonction = models.CharField("lieu de sa fonction", max_length=254)
+    lieu_fonction = models.CharField(_("lieu de sa fonction"), max_length=254)
         
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
@@ -153,13 +145,13 @@ class Client(DateCrDateMod):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    tva_cli = models.CharField("tva", max_length = 14)
+    tva_cli = models.CharField(_("tva"), max_length = 14)
     employe = models.ForeignKey(Employe,
                                 on_delete=models.CASCADE)
     utilisateur = models.OneToOneField(CustomUser,
                                           unique=True,
                                 on_delete=models.CASCADE)
-    adr_entreprise = models.CharField("adresse de l'entreprise", max_length=254)
+    adr_entreprise = models.CharField(_("adresse de l'entreprise"), max_length=254)
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
@@ -171,22 +163,19 @@ class Contrat(DateCrDateMod):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    num_contrat = models.CharField("numéro du contrat", max_length=254, null=False, blank=False, unique=True)
+    num_contrat = models.CharField(_("numéro du contrat"), max_length=254, null=False, blank=False, unique=True)
     client = models.ForeignKey(Client, 
                                on_delete=models.CASCADE)
     #date_creation = models.DateField(null=False, blank=False, auto_now=True)
-    commentaires_contrat = models.CharField("commentaires", max_length=250, null=True, blank=True)
-        
-    """ def __str__(self):
-        return "Numéro du contrat: %s | Nom: %s | Prenom: %s" % (self.num_contrat, self.client.utilisateur.nom, self.client.utilisateur.prenom) """
+    commentaires_contrat = models.CharField(_("commentaires"), max_length=250, null=True, blank=True)
     
     
 class Contrat_detail(models.Model):
     STATUT = (
-        ('Proposition', 'Proposition'),
-        ('En négociation', 'En négociation'),
-        ('Signé', 'Signé'),
-        ('Arrêté', 'Arrêté'),
+        (_('Proposition'), _('Proposition')),
+        (_('En négociation'), _('En négociation')),
+        (_('Signé'), _('Signé')),
+        (_('Arrêté'), _('Arrêté')),
     )
     id_contrat_detail = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
@@ -203,11 +192,11 @@ class Licence(models.Model):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    num_licence = models.CharField("numéro licence", max_length=254, null=False, blank=False, unique=True)
+    num_licence = models.CharField(_("numéro licence"), max_length=254, null=False, blank=False, unique=True)
     contrat = models.ForeignKey(Contrat, 
                                on_delete=models.CASCADE)
-    date_achat = models.DateField("date d'achat de licence", )
-    nombre = models.PositiveIntegerField("nombre de licences", )
+    date_achat = models.DateField(_("date d'achat de licence"))
+    nombre = models.PositiveIntegerField(_("nombre de licences"))
     type = models.CharField(max_length=250)
-    commentaires_lic = models.CharField("commentaires", max_length=250, null=True, blank=True)
+    commentaires_lic = models.CharField(_("commentaires"), max_length=250, null=True, blank=True)
     

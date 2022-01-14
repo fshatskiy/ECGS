@@ -26,6 +26,7 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin'
+os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\gettext-iconv\\bin'
 
 
 # Quick-start development settings - unsuitable for production
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    "django_makemessages_xgettext",
     
     'ecgsproject.apps.EcgsprojectConfig',
 ]
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,6 +79,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
+                #'django.core.context_processors.i18n',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -127,13 +131,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
+#default language for the site
 LANGUAGE_CODE = 'fr-BE'
 
 TIME_ZONE = 'Europe/Brussels'
 
 # Utiles pour la traduction et le formattage des données
-USE_I18N = True
 
+#support localization
+USE_I18N = True
+#calendars according to the current locale
 USE_L10N = True
 
 USE_TZ = True
@@ -144,16 +151,21 @@ TIME_INPUT_FORMATS = [
     '%H:%M',        # '14:30'
 ]
 
-""" LANGUAGES = [
+LANGUAGES = (
   ('fr', _('French')),
   ('en', _('English')),
-  ('ru', _('Russian')),
-] """
+)
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 LOGIN_URL = 'login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
+
+DJANGO_ADMIN_URL = 'admin/'
 
 STATIC_URL = '/static/'
 
