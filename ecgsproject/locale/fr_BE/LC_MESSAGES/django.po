@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 16:07+0100\n"
+"POT-Creation-Date: 2022-01-15 00:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fr-BE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: .\ecgsproject\admin.py:96
 msgid "Personal info"
 msgstr ""
@@ -103,36 +103,40 @@ msgstr ""
 
 #: .\ecgsproject\templates\base.html:66
 msgid "Accueil"
-msgstr "Home"
+msgstr ""
 
 #: .\ecgsproject\templates\base.html:67
 msgid "À propos"
-msgstr "About"
+msgstr ""
 
 #: .\ecgsproject\templates\base.html:68
 msgid "Services"
-msgstr "Services"
+msgstr ""
 
 #: .\ecgsproject\templates\base.html:69
 msgid "Portfolio"
-msgstr "Portfolio"
+msgstr ""
 
 #: .\ecgsproject\templates\base.html:70
 msgid "Équipe"
-msgstr "Team"
+msgstr ""
 
-#: .\ecgsproject\templates\base.html:91
+#: .\ecgsproject\templates\base.html:86
 msgid "Se déconnecter"
-msgstr "Disconnect"
+msgstr ""
 
-#: .\ecgsproject\templates\base.html:92
+#: .\ecgsproject\templates\base.html:87
 msgid "Portail"
-msgstr "Portail"
+msgstr ""
 
-#: .\ecgsproject\templates\base.html:94
+#: .\ecgsproject\templates\base.html:89
 msgid "Devenir membre"
-msgstr "Register"
+msgstr ""
 
-#: .\ecgsproject\templates\base.html:95
+#: .\ecgsproject\templates\base.html:90
 msgid "Se connecter"
-msgstr "Login"
+msgstr ""
+
+#: .\ecgsproject\templates\base.html:131
+msgid "Tous droits réservés"
+msgstr ""

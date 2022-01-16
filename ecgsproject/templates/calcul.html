@@ -1,0 +1,123 @@
+{% extends 'base.html' %} 
+{% load i18n %}
+
+{% block content %}
+
+
+
+<div class="container h-100">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-10">
+            <!-- Form -->
+            <form class="form-example" action="" method="post">
+                <h1>Bootstrap 4: Align Center</h1>
+                <p class="description">A tutorial on how to align a "form" vertically and horizontally in Bootstrap 4.</p>
+                <!-- Input fields -->
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" class="form-control username" id="username" placeholder="Username..." name="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control password" id="password" placeholder="Password..." name="password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-customized">Login</button>
+                <!-- End input fields -->
+                <p class="copyright">&copy; Bootstrap 4 "Align Center" tutorial by <a href="https://azmind.com">AZMIND</a>.</p>
+            </form>
+            <!-- Form end -->
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+
+
+        
+    <div class="row">
+      <div class="col text-center text-lg">
+        <h2 Style="margin-bottom: 30px;">Tester notre produit en direct</h2>
+        <p> Ici même, vous avez la possibilité de faire un test provisoire vous donnant ainsi un premier regard sur le produit.</br>
+        Afin de réaliser ce test, nous aurions besoin de vos cooredonnées afin de pouvoir vous contacter par la suite.</p>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-4">
+        <div class="form-outline">
+          <input type="text" id="nom" name="nom" class="form-control" placeholder="Nom" />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-outline">
+          <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Prénom"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-ld-3 cta-btn-container">
+      <button id="btnShow" type="submit" 
+        style="letter-spacing: 1px;
+        display: inline-block;
+        padding: 10px 30px;
+        border-radius: 2px;
+        transition: 0.5s;
+        margin: 10px;
+        border: 2px solid #fff;
+        color: #fff;
+        background-color:#5cb874;
+        border-radius: 4px;" 
+        class="btn btn-lg btn-light submitBtn">Faire le test</button>
+    </div>
+
+
+    <form method="post">  
+      {% csrf_token %}
+        
+        <!-- <div class="form-group"> 
+          <input class="form-control" id="nom"  name="nom" placeholder="Nom">  
+        </div> 
+        <div class="form-group">
+          <input class="form-control" id="prenom"  name="prenom" placeholder="Prénom">  
+        </div>  -->
+
+        
+
+        <div class="row mb-4">
+          <div class="col-8">
+            <div class="form-outline">
+              <input type="email" id="email" name="email" class="form-control" placeholder="Adresse email" />
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-8">
+            <div class="form-outline">
+              <input id="tel" name="tel" class="form-control" placeholder="Numéro de téléphone"/>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-8">
+            <div class="form-outline">
+              <input type="text" id="entreprise" name="entreprise" class="form-control" placeholder="Entreprise"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="form-group">
+          <input type="email" class="form-control" id="email"  name="email" placeholder="Adresse email">  
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="tel"  name="tel" placeholder="Numéro de téléphone">  
+        </div> 
+        <div class="form-group">
+          <input class="form-control" id="entreprise"  name="entreprise" placeholder="Entreprise">  
+        </div>  -->
+      <!-- <button type="submit" class="submitBtn">Envoyer</button>   -->
+    </form>  
+  </div>
+
+
+{% endblock content %}

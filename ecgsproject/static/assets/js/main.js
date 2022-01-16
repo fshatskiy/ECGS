@@ -175,6 +175,26 @@
   });
 
   /**
+   * Cookie
+   */
+
+   const cookieContainer = document.querySelector(".cookie");
+   const cookieButton = document.querySelector(".cookie-btn");
+ 
+   cookieButton.addEventListener("click", () => {
+     localStorage.setItem("cookieBannerDisplayed", "true");
+     cookieContainer.classList.remove("active");
+   });
+ 
+   /* setTimeout(() => {
+     if (!localStorage.getItem("cookieBannerDisplayed")) {
+       cookieContainer.classList.add("active");
+     } else {
+      cookieContainer.classList.remove("active");
+     }
+   }); */
+
+  /**
    * Clients Slider
    */
   new Swiper('.clients-slider', {
@@ -213,7 +233,7 @@
   /**
    * Porfolio isotope and filter
    */
-  window.addEventListener('load', () => {
+  /* window.addEventListener('load', () => {
     let portfolioContainer = select('.portfolio-container');
     if (portfolioContainer) {
       let portfolioIsotope = new Isotope(portfolioContainer, {
@@ -236,19 +256,19 @@
       }, true);
     }
 
-  });
+  }); */
 
   /**
    * Initiate portfolio lightbox 
    */
-  const portfolioLightbox = GLightbox({
+  /* const portfolioLightbox = GLightbox({
     selector: '.portfolio-lightbox'
-  });
+  }); */
 
   /**
    * Portfolio details slider
    */
-  new Swiper('.portfolio-details-slider', {
+  /* new Swiper('.portfolio-details-slider', {
     speed: 400,
     loop: true,
     autoplay: {
@@ -260,6 +280,6 @@
       type: 'bullets',
       clickable: true
     }
-  });
+  }); */
 
 })()

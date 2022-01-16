@@ -18,6 +18,8 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', views.activate, name='activate'), 
     path('login/', views.loginPage, name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path("conditions d'utilisation/", views.conditions, name='conditions'),
+    path("calcul/", views.calculs, name='calcul'),
     
     url(r'^', include('django.contrib.auth.urls')),
     path('reset_password/', auth_views.PasswordResetView.as_view(), name='reset_password'),

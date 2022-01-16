@@ -27,6 +27,46 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
 
+
+/*--------------------------------------------------------------
+# Consent message
+--------------------------------------------------------------*/
+/* .cookie-container {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  background: #2f3640;
+  color: #f5f6fa;
+  padding: 0 32px;
+  box-shadow: 0 -2px 16px rgba(47, 54, 64, 0.39);
+
+  transition: 400ms;
+}
+
+.cookie-container.active {
+  bottom: 0;
+}
+
+.cookie-container a {
+  color: #f5f6fa;
+}
+
+.cookie-btn {
+  background: #e84118;
+  border: 0;
+  color: #f5f6fa;
+  padding: 12px 48px;
+  font-size: 18px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+} */
+
+/*--------------------------------------------------------------
+# End Consent message
+--------------------------------------------------------------*/
+
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/
@@ -720,7 +760,7 @@ section {
 /*--------------------------------------------------------------
 # Services
 --------------------------------------------------------------*/
-.services .icon-box {
+/* .services .icon-box {
   text-align: center;
   padding: 70px 20px 80px 20px;
   transition: all ease-in-out 0.3s;
@@ -848,19 +888,19 @@ section {
 
 .services .iconbox-teal:hover .icon path {
   fill: #11dbcf;
-}
+} */
 
 /*--------------------------------------------------------------
 # Cta
 --------------------------------------------------------------*/
 .cta {
   background: #5cb874;
-  padding: 80px 0;
+  padding: 40px 0;
 }
 
-.cta h3 {
+.cta h2 {
   color: #fff;
-  font-size: 28px;
+  /* font-size: 28px; */
   font-weight: 700;
 }
 
@@ -868,22 +908,7 @@ section {
   color: #fff;
 }
 
-.cta .cta-btn {
-  font-family: "Raleway", sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 1px;
-  display: inline-block;
-  padding: 10px 30px;
-  border-radius: 2px;
-  transition: 0.5s;
-  margin: 10px;
-  border: 2px solid #fff;
-  color: #fff;
-  border-radius: 4px;
-}
-
-.cta .cta-btn:hover {
+.btn-light :hover {
   background: #fff;
   color: #5cb874;
 }
@@ -905,7 +930,7 @@ section {
 /*--------------------------------------------------------------
 # Portfolio
 --------------------------------------------------------------*/
-.portfolio .portfolio-item {
+/* .portfolio .portfolio-item {
   margin-bottom: 30px;
 }
 
@@ -1022,12 +1047,12 @@ section {
 
 .portfolio .portfolio-wrap:hover .portfolio-info {
   opacity: 1;
-}
+} */
 
 /*--------------------------------------------------------------
 # Portfolio Details
 --------------------------------------------------------------*/
-.portfolio-details {
+/* .portfolio-details {
   padding-top: 40px;
 }
 
@@ -1087,7 +1112,7 @@ section {
 
 .portfolio-details .portfolio-description p {
   padding: 0;
-}
+} */
 
 /*--------------------------------------------------------------
 # Team
