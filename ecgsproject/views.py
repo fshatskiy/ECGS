@@ -125,5 +125,22 @@ def activate(request, uidb64, token):
         return redirect('accueil')
             
 
+def conditions(request):
+    return render(request, 'politiques.html')
 
-    
+def calcul(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data['email']
+            associated_users = CustomUser.objects.filter(Q(email=data))
+            if associated_users.exists():
+                messages.error(request, 'Cette adresse email a déjà été utilisée.')
+                return redirect('accueil') #METTRE #cta
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            return redirect('calcul')
+
+def calculs(request):
+    return render(request, 'calcul.html')
