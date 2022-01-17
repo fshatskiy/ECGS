@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
-from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse
-#from django.contrib.auth.models import User
 from .models import CustomUser
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
@@ -11,15 +8,11 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.forms import UserCreationForm
 from django.db.models.query_utils import Q
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import FormView
-from django.urls import reverse_lazy
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, Calcul_accueilForm, CalculForm
+
 
 UserModel = get_user_model()
 # Create your views here.
@@ -49,19 +42,24 @@ def accueil(request):
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('accueil')
+    if request.method == 'GET':
+        print("get loginPage")
+        return render(request, 'login.html')
     if request.method == 'POST':
         form = LoginForm(request.POST)
+        print("form =")
         if form.is_valid():
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]# We check if the data is correct
-        
-        user = authenticate(request, email=email, password=password)
-        
-        if user is not None:
-            login(request, user)# we connect the user
-            return redirect('admin')
+            if email and password :
+                user = authenticate(request, email=email, password=password)
+            if user is not None and user.is_staff:
+                login(request, user)# we connect the user
+                return redirect('admin')
+            messages.error(request, "L'adresse email ou le mot de passe ne sont pas valides")
         else:  # otherwise an error will be displayed
-                messages.error(request, 'Adresse email ou mot de passe sont invalides')
+            messages.error(request, 'Les informations sont invalides ou votre compte n\'a pas encore été activé par l\'administrateur')
+            return redirect('login')
     else:
         form=LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -81,7 +79,9 @@ def signup(request):
             if associated_users.exists():
                 messages.error(request, 'Cette adresse email a déjà été utilisée.')
                 return redirect('register')
-            user = form.save(commit=False)
+            
+            user = form.save(commit=False)            
+            #user.set_password(form.cleaned_data['password1'])
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
@@ -100,8 +100,8 @@ def signup(request):
             #check
             messages.success(request, 'Veuillez confirmer votre adresse email afin de terminer l\'inscription')
             return redirect('accueil')
-        messages.error(request, "Les informations sont invalides")
-        return redirect('register')
+        messages.error(request, "Les informations rentrées sont invalides")
+        """ return redirect('register') """
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
@@ -128,9 +128,14 @@ def activate(request, uidb64, token):
 def conditions(request):
     return render(request, 'politiques.html')
 
-def calcul(request):
+def calcul_accueil(request):
+    print("calcul")
+    if request.method == 'GET':
+        print("get")
+        return render(request, 'index.html')
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        print("post")
+        form = Calcul_accueilForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data['email']
             associated_users = CustomUser.objects.filter(Q(email=data))
@@ -140,7 +145,10 @@ def calcul(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
+            print("user enregistré")
             return redirect('calcul')
+    print("rien")
+    return render(request, 'index.html', {'form': form})
 
-def calculs(request):
-    return render(request, 'calcul.html')
+def calcul(request):
+    pass

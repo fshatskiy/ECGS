@@ -44,7 +44,7 @@ class UserManager(BaseUserManager):
     
     
 class DateCrDateMod(models.Model):
-    created_date = models.DateTimeField(_("créé le"), editable=False)
+    created_date = models.DateTimeField(_("créé le"), auto_now=True)
     modified_date = models.DateTimeField(_("modifié le"), editable=False, null=True, blank=True)
     created_by = models.CharField(_("créé par"), max_length=254, editable=False)
     modified_by = models.CharField(_("modifié par"), max_length=254, editable=False, null=True, blank=True)

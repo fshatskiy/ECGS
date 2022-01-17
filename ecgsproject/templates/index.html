@@ -308,28 +308,29 @@
                 <h2 style="text-align: center;  margin-bottom: 25px;">Tester notre produit en direct</h2>  
                 <p style="text-align: center;"> Ici même, vous avez la possibilité de faire un test provisoire vous donnant ainsi un premier regard sur le produit.</br>
                   Afin de réaliser ce test, nous aurions besoin de vos cooredonnées afin de pouvoir vous contacter par la suite.</p>
-                <form method="post">  
+                
+                  <form method="post">  
                     {% csrf_token %}
                      
                     <div class="mb-3 position-relative form-group ">  
                         <label for="nom" style="color:white;">Nom</label>  
-                        <input class="form-control" id="nom"  name="nom">  
+                        <input class="form-control" id="nom" required  name="nom">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
                         <label for="prenom" style="color:white;">Prenom</label>  
-                        <input class="form-control" id="prenom"  name="prenom">  
+                        <input class="form-control" id="prenom" required  name="prenom">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
                       <label for="email" style="color:white;">Adresse email :</label>  
-                      <input type="email" class="form-control" id="email"  name="email">  
+                      <input type="email" class="form-control" id="email" required  name="email">  
                   </div> 
                     <div class="mb-3 position-relative form-group">  
-                        <label for="prenom" style="color:white;">Numéro de téléphone</label>  
-                        <input class="form-control" id="tel"  name="tel">  
+                        <label for="tel" style="color:white;">Numéro de téléphone</label>  
+                        <input class="form-control" id="tel" required  name="tel">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
-                        <label for="prenom" style="color:white;">Entreprise</label>  
-                        <input class="form-control" id="entreprise"  name="entreprise">  
+                        <label for="entreprise" style="color:white;">Entreprise</label>  
+                        <input class="form-control" id="entreprise" required  name="entreprise">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
                       <button id="btnShow" type="submit" style="letter-spacing: 1px;
@@ -348,7 +349,7 @@
                     
                   </form>  
               </div>  
-          </div>  
+          </div> 
         </div>
       </div>
     </section><!-- End Cta Section -->
