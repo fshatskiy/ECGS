@@ -13,6 +13,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.contrib import messages
 
 # Register your models here.
 
@@ -71,6 +72,7 @@ class CustomUserAdmin(DjangoUserAdmin):
         "prenom",
         "tel",
         "entreprise",
+        "fonction",
     )
     ordering = ("email",)
 
@@ -115,6 +117,7 @@ class CustomUserAdmin(DjangoUserAdmin):
             obj.created_date = timezone.now()
             print(obj.created_by, "obj.created_by de save_model => CustomUserAdmin")
         print("here4")
+        messages.success(request, "Si un problème survient, n'hésitez pas à contacter l'administrateur.")
         obj.save()
 
 
@@ -134,7 +137,7 @@ class CustomUserAdmin(DjangoUserAdmin):
 class IntegrateurAdmin(admin.ModelAdmin):
     
     list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_integrateur", "created_by", "created_date", "modified_date"]
-    
+    search_fields = ("tva_integrateur", "utilisateur__nom", "utilisateur__prenom", "utilisateur__entreprise", "utilisateur__email", "utilisateur__fonction",)
     
     def get_nom(self, obj):
         return obj.utilisateur.nom
@@ -177,6 +180,7 @@ class IntegrateurAdmin(admin.ModelAdmin):
             obj.created_date = timezone.now()
             print(obj.created_by, "obj.created_by de save_model => IntegrateurAdmin")
         print("here4")
+        messages.success(request, "Si un problème survient, n'hésitez pas à contacter l'administrateur.")
         obj.save()
         """ groupInt = Group.objects.get(name='INTEGRATEURS')
         groupEmpl = Group.objects.get(name='EMPLOYES')
@@ -206,17 +210,6 @@ class IntegrateurAdmin(admin.ModelAdmin):
         print("here33")
         return Integrateur.objects.filter(created_by=request.user)#ne rentrera jamais dedans tant que les GROUPES sont mis en place
 
-    """def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__date_joined']
-        else:
-            return []
-        
-    def get_search_fields(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
-        else:
-            return []  """
 
 
 @admin.register(Employe)
@@ -224,7 +217,7 @@ class EmployeAdmin(admin.ModelAdmin):
     # readonly_fields = ('integrateur',)#to not be able to change it manually
 
     list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "created_by", "created_date", "modified_date"]
-    
+    search_fields = ("utilisateur__entreprise", "utilisateur__nom", "utilisateur__prenom", "utilisateur__tel", "utilisateur__email",)
     #form = EmployeForm #lien vers le formulaire
     
     def get_nom(self, obj):
@@ -256,30 +249,15 @@ class EmployeAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         print("here1")
         if change:
-            # print(obj.id_utilisateur, "obj.id_utilisateur")
             print("here2")
-            """ if obj.utilisateur.entreprise != obj.integrateur.utilisateur.entreprise:
-                print("erreur modif equald entreprises : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
-            #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
-            #print("MODIF j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.modified_by = str(request.user)
             obj.modified_date = timezone.now()
             print(obj.modified_by, "obj.modified_by de save_model => EmployeAdmin")
         if not change:
             print("here3")
-            """ if obj.utilisateur.entreprise != obj.integrateur.utilisateur.entreprise:
-                print("erreur equald entreprises : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
-            #obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
-            #print("CREATION j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise)
             obj.created_by = request.user
             obj.created_date = timezone.now()
-            # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
-        """ print(request.user, " : integrateur = request.user")
-        obj.integrateur_id = request.user
-        print(request.user.tva_integrateur, " : integrateur = request.user.tva_integrateur")
-        print("here4") """
-        """ obj.utilisateur.entreprise = obj.integrateur.utilisateur.entreprise
-        print("FIN j'oblige a mettre la meme entr : ", obj.utilisateur.entreprise, obj.integrateur.utilisateur.entreprise) """
+        messages.success(request, "Si un problème survient, n'hésitez pas à contacter l'administrateur.")
         obj.save()
 
     # permet à l'utilisateur de voir uniquement les utilisateurs qu'il a créés
@@ -291,6 +269,9 @@ class EmployeAdmin(admin.ModelAdmin):
             return Employe.objects.all()
         print("here33")
         print("EMPLOYEADMIN filtre")
+        #fonctionne pas le print suivant
+        #print("test", Employe.objects.filter(integrateur__utilisateur__email=request.user))
+
         return Employe.objects.filter(created_by=request.user)
 
     # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés
@@ -311,25 +292,13 @@ class EmployeAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-    """ def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__entreprise', 'id_utilisateur__date_joined']
-        else:
-            return ['id_utilisateur__date_joined']
-        
-    def get_search_fields(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction']
-        else:
-            return [] """
-
-    # ForeignKey drop list
-
 
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date", "modified_date"]
+    """ list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date", "modified_date"]
+    search_fields = ("utilisateur__nom", "utilisateur__prenom", "tva_cli", "utilisateur__entreprise", "utilisateur__email", "utilisateur__fonction",)
+    
     
     def get_nom(self, obj):
         return obj.utilisateur.nom
@@ -352,14 +321,14 @@ class ClientAdmin(admin.ModelAdmin):
     get_entreprise.short_description = 'Entreprise'  #Renames column head
     
     def get_empl_entreprise(self, obj):
-        return obj.employe.utilisateur.entreprise
+        return obj.employe.integrateur.utilisateur.entreprise
     get_empl_entreprise.admin_order_field  = 'employe__utilisateur__entreprise'  #Allows column order sorting
-    get_empl_entreprise.short_description = 'Entreprise de l\'employé'  #Renames column head
+    get_empl_entreprise.short_description = 'Intégrateur'  #Renames column head
     
     def get_tel(self, obj):
         return obj.utilisateur.tel
     get_tel.admin_order_field  = 'utilisateur__tel'  #Allows column order sorting
-    get_tel.short_description = 'Téléphone'  #Renames column head
+    get_tel.short_description = 'Téléphone'  #Renames column head """
     
     # Save models
     def save_model(self, request, obj, form, change):
@@ -375,7 +344,7 @@ class ClientAdmin(admin.ModelAdmin):
             obj.created_by = request.user
             obj.created_date = timezone.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
-        
+        messages.success(request, "Si un problème survient, n'hésitez pas à contacter l'administrateur.")
         obj.save()
         
 # permet d'afficher les objets selon l'utilisateur connecté :
@@ -388,25 +357,16 @@ class ClientAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             print("here22Client")
             return Client.objects.all()
-        
-        # sinon si, l'utilisateur connecté est un intégrateur,
+        #permettre aux integrateurs de voir leurs clients :
+        #si, l'utilisateur courant est un intégrateur,
         # Affiche les objets créés par le personnel de l'intégrateur connecté (de la même entreprise)
         elif Employe.objects.filter(created_by = request.user).exists():
             # (ne rentre jms dans la codition si on est connectés en tant qu'employé)
-            """ print("Clientdeuxieme elif")
-            n=[]
-            test=Employe.objects.values_list('utilisateur__email', flat=True).filter(created_by=request.user)
-            print("test : ", test)
-            for i in test:
-                n += Client.objects.filter(created_by=i)
-                print ("n : ", n)
-            print("final n : ", n)
-            print(Client.objects.filter(employe__created_by=request.user)) """
             return Client.objects.filter(employe__created_by=request.user)
-        
         print("Clientfin")
-        #sinon affiche les objets créés par uniquement l'employé connecté
-        return Client.objects.filter(created_by=request.user)
+        #affiche les clients dont leur employé est l'user courant
+        return Client.objects.filter(employe__utilisateur__email=request.user)
+        #sinon affiche les objets CREES par uniquement l'employé connecté courant
     
 
     # permet à l'utilisateur de voir dans le droplist uniquement les utilisateurs qu'il a créés
@@ -417,49 +377,15 @@ class ClientAdmin(admin.ModelAdmin):
             print("here222empl")
             kwargs["queryset"] = Employe.objects.all()
         elif db_field.name == "employe" and not request.user.is_superuser:
-            #emails = Integrateur.objects.all()
-            #for integrateur in emails:
-            #    print("emails : ", integrateur.utilisateur)
             print("here333empl")
-            test = request.user
             print("test :", Employe.objects.filter(utilisateur=request.user))
             kwargs["queryset"] = Employe.objects.filter(utilisateur=request.user)  # employe id_utilisateur
         elif db_field.name == "utilisateur" and not request.user.is_superuser:
-            #emails = Integrateur.objects.all()
-            #for integrateur in emails:
-            #    print("emails : ", integrateur.utilisateur)
             print("here333empl")
-            test = request.user
             print("test :", CustomUser.objects.filter(created_by=request.user))
             kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)
         print("here444empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-
-
-    """exclude = ('id_utilisateur',)#to not be able to change it manually
-    @admin.display(description='Employé')
-    def employe(obj):
-        return obj.id_employe
-    list_display = (nom_client, 'id_employe', 'adr_entreprise', 'num_contrat', 'num_licence', 'statut', 'id_utilisateur')"""
-
-
-    """
-    
-    def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__entreprise', 'statut', 'id_utilisateur']
-        else:
-            return ['id_utilisateur__date_joined', 'statut']
-        
-    def get_search_fields(self, request):
-        if request.user.is_superuser:
-            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__entreprise', 'id_utilisateur__fonction', 'id_utilisateur__id_utilisateur', 'id_utilisateur__date_joined']
-        else:
-            return ['id_utilisateur__nom', 'id_utilisateur__prenom', 'id_utilisateur__mail', 'id_utilisateur__tel', 'id_utilisateur__date_joined', 'id_utilisateur__fonction',]
-    
-    """
 
 
 
@@ -483,7 +409,10 @@ class LicenceInline(admin.TabularInline):
 class ContratAdmin(admin.ModelAdmin):
     inlines = [Contrat_detailInline, LicenceInline]
     
-    list_display = ["get_num_contrat", "get_nom", "get_statut", "created_by", "get_int", "created_date", "modified_by", "modified_date"]
+        
+        
+    """ list_display = ["get_num_contrat", "get_nom", "get_statut", "created_by", "get_int", "created_date", "modified_by", "modified_date"]
+    search_fields = ("num_contrat", "client__utilisateur__nom",  "client__utilisateur__prenom", "client__tva_cli",)
     
     def get_num_contrat(self, obj):
         return obj.num_contrat
@@ -503,7 +432,7 @@ class ContratAdmin(admin.ModelAdmin):
     def get_statut(self, obj):
         return obj.contrat_detail.statut
     get_statut.admin_order_field  = 'contrat_detail__statut'  #Allows column order sorting
-    get_statut.short_description = 'Statut'  #Renames column head
+    get_statut.short_description = 'Statut'  #Renames column head """
     
     
     
@@ -523,7 +452,7 @@ class ContratAdmin(admin.ModelAdmin):
             obj.created_by = request.user
             obj.created_date = timezone.now()
             # print(obj.created_by, "obj.created_by de save_model => EmployeAdmin")
-        
+        messages.success(request, "Si un problème survient, n'hésitez pas à contacter l'administrateur.")
         obj.save()
 
 # permet d'afficher les objets selon l'utilisateur connecté :
@@ -541,17 +470,7 @@ class ContratAdmin(admin.ModelAdmin):
         # Affiche les contrats créés par le personnel de l'intégrateur connecté (de la même entreprise)
         elif Employe.objects.filter(created_by = request.user).exists():
             # (ne rentre jms dans la codition si on est connectés en tant qu'employé)
-            """ print("Contratdeuxieme elif")
-            n=[]
-            test=Employe.objects.values_list('utilisateur__email', flat=True).filter(created_by=request.user)
-            print("test : ", test)
-            for i in test:
-                n += Contrat.objects.filter(created_by=i)
-                print ("n : ", n)
-            print("final n : ", n)
-            print(Contrat.objects.filter(client__employe__created_by=request.user)) """
             return Contrat.objects.filter(client__employe__created_by=request.user)
-        
         print("Contratfin")
         #sinon affiche les contrats créés par uniquement l'employé connecté
         return Contrat.objects.filter(created_by=request.user)
@@ -577,7 +496,7 @@ class ContratAdmin(admin.ModelAdmin):
 
 @admin.register(Resultat)
 class ResultatAdmin(admin.ModelAdmin):
-    list_display = ["get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
+    """ list_display = ["get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
     #ACTIVER APRES + ne surtout pas laisser le champ "utilisateur" utilisable
     readonly_fields = ["utilisateur", "get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
     
@@ -599,6 +518,6 @@ class ResultatAdmin(admin.ModelAdmin):
     def get_entreprise(self, obj):
         return obj.utilisateur.entreprise
     get_entreprise.admin_order_field  = 'utilisateur__entreprise'  #Allows column order sorting
-    get_entreprise.short_description = 'Entreprise'  #Renames column head
+    get_entreprise.short_description = 'Entreprise' """  #Renames column head
     
     #Save_model : dans view ?

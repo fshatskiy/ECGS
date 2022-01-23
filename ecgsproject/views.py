@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes
 from django.db.models.query_utils import Q
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import LoginForm, RegisterForm, Calcul_accueilForm, CalculForm
+from .forms import LoginForm, RegisterForm, AccueilForm
 
 
 UserModel = get_user_model()
@@ -42,9 +42,6 @@ def accueil(request):
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('accueil')
-    if request.method == 'GET':
-        print("get loginPage")
-        return render(request, 'login.html')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         print("form =")
@@ -128,27 +125,28 @@ def activate(request, uidb64, token):
 def conditions(request):
     return render(request, 'politiques.html')
 
-def calcul_accueil(request):
-    print("calcul")
-    if request.method == 'GET':
-        print("get")
-        return render(request, 'index.html')
+def resultat_accueil(request):
     if request.method == 'POST':
+        print("resultat_accueil")
         print("post")
-        form = Calcul_accueilForm(request.POST)
+        form = AccueilForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data['email']
             associated_users = CustomUser.objects.filter(Q(email=data))
             if associated_users.exists():
                 messages.error(request, 'Cette adresse email a déjà été utilisée.')
-                return redirect('accueil') #METTRE #cta
+                return redirect('accueil') #METTRE '#cta'
             user = form.save(commit=False)
             user.is_active = False
             user.save()
             print("user enregistré")
             return redirect('calcul')
-    print("rien")
-    return render(request, 'index.html', {'form': form})
+    else:
+        form = AccueilForm()
+    return render(request, 'calcul.html', {'form': form})
+
 
 def calcul(request):
-    pass
+    if request.user.is_authenticated:
+        return redirect('accueil')
+    return render(request, 'calcul.html')

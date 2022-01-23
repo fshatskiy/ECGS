@@ -3,7 +3,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf.urls import url
 from . import views
-from ecgsproject.views import loginPage
 from django.contrib.auth.views import LogoutView
 
 admin.site.site_header = 'Portail d\'EcoSoft'

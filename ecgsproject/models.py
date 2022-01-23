@@ -2,8 +2,10 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
+from django.db.models.signals import post_delete
 
 
 # Create your models here.
@@ -70,8 +72,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     last_login = models.DateTimeField(null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     tel = models.CharField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
-    entreprise = models.CharField(max_length=200)#changer lorsque register.html sera complet
-    fonction = models.CharField(max_length=200)#changer lorsque register.html sera complet
+    entreprise = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
+    fonction = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
@@ -90,6 +92,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
         verbose_name_plural = _('Utilisateurs')
 
 class Resultat(models.Model):
+    TYPE = (
+        (_('Mono-horaire'), _('Mono-horaire')),
+        (_('Bi-horaire'), _('Bi-horaire')),
+    )
     id_resultat = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
@@ -98,9 +104,15 @@ class Resultat(models.Model):
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
-    nb_h_tot_prest_ann = models.PositiveIntegerField(null=True, blank=True)#test
-    utilisation_inutile = models.PositiveIntegerField(null=True, blank=True)#test
-    date = models.DateTimeField(auto_now=True)#test
+    nb_appareils = models.PositiveIntegerField(null=True, blank=True, editable=False)#test
+    #Nb_app * conso 5.79w/h = total conso en w/h + la conso du switch 50w/h
+    prix_kwh = models.FloatField(default=0.25, blank=True, editable=False)#+-25 centimes kwh
+    type_compteur = models.CharField(max_length=50, editable=False, choices=TYPE) #a simple tarif / bi-horaire
+    nb_conges = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    result_pourcent = models.FloatField(blank=True, editable=False)
+    result_euro = models.FloatField(blank=True, editable=False)
+    date = models.DateTimeField(auto_now=True, editable=False)#test
+    
     
     def __str__(self):
         return "%s" % (self.id_resultat)
@@ -111,7 +123,7 @@ class Integrateur(DateCrDateMod):
                                    primary_key=True, 
                                    editable=False,
                                    max_length = 14)
-    tva_integrateur = models.CharField(_("tva"),max_length = 14)
+    tva_integrateur = models.CharField(_("tva"),max_length = 14, unique=True)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
@@ -146,29 +158,29 @@ class Client(DateCrDateMod):
                                 primary_key=True, 
                                 editable=False)
     tva_cli = models.CharField(_("tva"), max_length = 14)
-    employe = models.ForeignKey(Employe,
-                                on_delete=models.CASCADE)
+    employe = models.ForeignKey(Employe, null=True, on_delete=models.SET_NULL)
     utilisateur = models.OneToOneField(CustomUser,
-                                          unique=True,
-                                on_delete=models.CASCADE)
-    adr_entreprise = models.CharField(_("adresse de l'entreprise"), max_length=254)
+                                          unique=True, null=True,
+                                on_delete=models.SET_NULL)
+    adr_entreprise = models.CharField(_("adresse de l'entreprise"), max_length=254) #sera gardé lors de la suppression pour stats
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
     
 
-
+# Contrat, Contrat_detail et licence sont liés.
+# Lorsqu'on supprime un contrat, tout le reste est supprimé également
 class Contrat(DateCrDateMod):
     id_contrat = models.UUIDField(default=uuid.uuid4, 
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
     num_contrat = models.CharField(_("numéro du contrat"), max_length=254, null=False, blank=False, unique=True)
-    client = models.ForeignKey(Client, 
-                               on_delete=models.CASCADE)
-    #date_creation = models.DateField(null=False, blank=False, auto_now=True)
+    client = models.OneToOneField(Client, blank=True, null=True, on_delete=models.SET_NULL)#blank true pr le moment
     commentaires_contrat = models.CharField(_("commentaires"), max_length=250, null=True, blank=True)
     
+    def __str__(self):
+        return "Numéro : %s   | Commentaires : %s" % (self.num_contrat, self.commentaires_contrat)
     
 class Contrat_detail(models.Model):
     STATUT = (
@@ -181,11 +193,12 @@ class Contrat_detail(models.Model):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    contrat = models.OneToOneField(Contrat, 
-                               on_delete=models.CASCADE)
+    contrat = models.OneToOneField(Contrat, null=True, on_delete=models.CASCADE)
     statut = models.CharField(max_length=200, choices=STATUT)
-    date_signature = models.DateField("date", null=True, blank=True)
+    date_signature = models.DateField("date", null=True, blank=True)#null et blank=True car contrat peut etre en attente
 
+    def __str__(self):
+            return "Statut : %s   | Date de signature : %s" % (self.statut, self.date_signature)
 
 class Licence(models.Model):
     id_licence = models.UUIDField(default=uuid.uuid4, 
@@ -193,10 +206,14 @@ class Licence(models.Model):
                                 primary_key=True, 
                                 editable=False)
     num_licence = models.CharField(_("numéro licence"), max_length=254, null=False, blank=False, unique=True)
-    contrat = models.ForeignKey(Contrat, 
-                               on_delete=models.CASCADE)
-    date_achat = models.DateField(_("date d'achat de licence"))
+    contrat = models.ForeignKey(Contrat,
+                                on_delete=models.CASCADE,
+                               null=True)
+    date_achat = models.DateField(_("date d'achat de licence"), blank=False, null=False)
+    periode_val = models.DateField(_("période de validité"), blank=False, null=False)
     nombre = models.PositiveIntegerField(_("nombre de licences"))
     type = models.CharField(max_length=250)
     commentaires_lic = models.CharField(_("commentaires"), max_length=250, null=True, blank=True)
     
+    def __str__(self):
+            return "Num licence : %s   | Type : %s  |  Commentaires licence : %s" % (self.num_licence, self.type, self.commentaires_lic)
