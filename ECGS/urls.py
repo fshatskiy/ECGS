@@ -20,12 +20,14 @@ from django.utils.translation import ugettext_lazy as _
 
 
 urlpatterns = [
-    path(_('admin/'), admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('ecgsproject.urls'))
 ]
 
+urlpatterns += [path(r'^i18n/', include('django.conf.urls.i18n')),]
+
 urlpatterns += i18n_patterns (
     # Django admin
-    path(_('admin/'), admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('ecgsproject.urls')),
 )

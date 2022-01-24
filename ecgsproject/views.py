@@ -6,12 +6,14 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.core.mail import send_mail, BadHeaderError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.db.models.query_utils import Q
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import LoginForm, RegisterForm, AccueilForm
+from .forms import LoginForm, RegisterForm, AccueilForm, ContactForm
+from django.http import HttpResponse
 
 
 UserModel = get_user_model()
@@ -150,3 +152,26 @@ def calcul(request):
     if request.user.is_authenticated:
         return redirect('accueil')
     return render(request, 'calcul.html')
+
+def contact(request):
+    """ if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            mail_subject = "Website Info Contact"
+            body = {
+            'nom': form.cleaned_data['nom'],
+            'prenom': form.cleaned_data['prenom'],
+            'adr_email': form.cleaned_data['adr_email'],
+            'message': form.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+
+            try:
+                send_mail(mail_subject, message, 'admin@example.com', ['admin@example.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            messages.success(request, 'Votre message a bien été envoyé. Un de nos collaborateurs vous contactera sous-peu. ')
+            return redirect ("accueil")
+         """
+    form = ContactForm()
+    return render(request, "index.html", {'form':form})

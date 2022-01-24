@@ -698,31 +698,36 @@
           </div>
 
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <form method="post" class="php-email-form">
+              {% csrf_token %}
               <div class="row">
                 <div class="form-group col-md-6">
-                  <label for="name">Your Name</label>
-                  <input type="text" name="name" class="form-control" id="name" required>
+                  <label for="nom">Nom</label>
+                  <input type="text" name="nom" class="form-control" id="nom" required>
                 </div>
-                <div class="form-group col-md-6 mt-3 mt-md-0">
-                  <label for="name">Your Email</label>
-                  <input type="email" class="form-control" name="email" id="email" required>
+                <div class="form-group col-md-6">
+                  <label for="prenom">Prénom</label>
+                  <input type="text" name="prenom" class="form-control" id="prenom" required>
+                </div>
+                <div class="form-group mt-3">
+                  <label for="adr_email">Adresse email</label>
+                  <input type="email" class="form-control" name="adr_email" id="adr_email" required>
                 </div>
               </div>
               <div class="form-group mt-3">
-                <label for="name">Subject</label>
-                <input type="text" class="form-control" name="subject" id="subject" required>
+                <label for="mail_subject">Sujet</label>
+                <input type="text" class="form-control" name="mail_subject" id="mail_subject" required>
               </div>
               <div class="form-group mt-3">
-                <label for="name">Message</label>
+                <label for="message">Message</label>
                 <textarea class="form-control" name="message" rows="10" required></textarea>
               </div>
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your message has been sent. Thank you!</div>
+              <div class="form-group"> 
+                <div class="g-recaptcha" data-sitekey="6LensC0eAAAAACgGQlxK2ScG3gDWk4nJhkK59H0v"></div>
               </div>
-              <div class="text-center"><button type="submit">Send Message</button></div>
+              <div class="text-center">
+                <button type="submit">Envoyer</button>
+              </div>
             </form>
           </div>
 

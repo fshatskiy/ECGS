@@ -44,6 +44,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -89,6 +90,23 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ECGS.wsgi.application'
+
+# Django admin Theme settings
+JAZZMIN_SETTINGS = {
+    "site_title": "EcoSoft",
+    "site_brand": "EcoSoft",
+    "site_logo": "ecosoft-coupe.png",
+    "site_logo_classes": "",
+    "site_icon": "assets/img/favicon.ico",
+    "welcome_sign": _("Bienvenue sur le site d'administration d'EcoSoft"),
+    "copyright": "EcoGreenSoft",
+    "show_ui_builder": True,
+    "language_chooser": True,
+    "related_modal_active": True,
+}
+
+
+
 
 
 # Database
@@ -182,7 +200,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 #EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND')
 ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_USER_EMAIL_UNIQUE = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

@@ -6,23 +6,6 @@ from django import forms
 from .models import Resultat, CustomUser
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
-
-
-""" class CustomUserForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    class Meta:
-        model = User
-        #fields = ['Nom', 'Prenom', 'Adresse e-mail', 'Téléphone', 'Nom Entreprise', 'Votre fonction', 'password1', 'password2']
-        fields = ['email', 'password1', 'password2'] """
-
-""" class LoginForm(AuthenticationForm):
-    class Meta:
-        fields = ['email', 'password']
-        
-        widgets = {
-            'email': forms.EmailInput(attrs={'class':'form-control'}),
-            'password': forms.PasswordInput(attrs={'class':'form-control'})
-        } """
     
         
 class LoginForm(forms.Form):
@@ -60,3 +43,20 @@ class RegisterForm(UserCreationForm):
                 password_validation.validate_password(password, self.instance)
             except ValidationError as error:
                 self.add_error('password1', error)
+                
+
+class ContactForm(forms.Form):
+    nom = forms.CharField(max_length = 50)
+    prenom = forms.CharField(max_length = 50)
+    adr_email = forms.EmailField(max_length = 150)
+    mail_subject = forms.CharField(max_length = 50)
+    message = forms.CharField(max_length = 2000)#a form field that accepts paragraph styled text.
+    
+    class Meta: 
+        widgets = {
+            'nom' : forms.TextInput(attrs={'class': 'form-control'}),
+            'prenom' : forms.TextInput(attrs={'class': 'form-control'}),
+            'adr_email' : forms.EmailInput(attrs={'class': 'form-control'}),
+            'mail_subject' : forms.TextInput(attrs={'class': 'form-control'}),
+            'message' : forms.Textarea(attrs={'class': 'form-control'}),
+        }

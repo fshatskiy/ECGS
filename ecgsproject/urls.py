@@ -5,7 +5,7 @@ from django.conf.urls import url
 from . import views
 from django.contrib.auth.views import LogoutView
 
-admin.site.site_header = 'Portail d\'EcoSoft'
+admin.site.site_header = 'Portail EcoSoft'
 # ajouter l'accueil
 
 #app_name = "ecgsproject"
