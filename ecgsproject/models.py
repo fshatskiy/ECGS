@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_delete
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 # Create your models here.
@@ -71,7 +72,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    tel = models.CharField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
+    tel = PhoneNumberField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
     entreprise = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
     fonction = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
 
@@ -130,7 +131,7 @@ class Integrateur(DateCrDateMod):
     adr_entreprise = models.CharField(_("adresse de l'entreprise"),max_length=254)
     #tva = models.CharField(max_length=14, unique=True)#international, unique
     lieu_fonction = models.CharField(_("lieu de sa fonction"),max_length=254)
-    tel_contact = models.CharField(_("téléphone de contact"),max_length=20)
+    tel_contact = PhoneNumberField(_("téléphone de contact"),max_length=20)
     
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)

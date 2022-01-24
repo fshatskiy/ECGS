@@ -6,6 +6,7 @@ from django import forms
 from .models import Resultat, CustomUser
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+
     
         
 class LoginForm(forms.Form):
