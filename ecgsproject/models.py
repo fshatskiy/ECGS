@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_delete
 from phonenumber_field.modelfields import PhoneNumberField
+from vies.models import VATINField
 
 
 # Create your models here.
@@ -124,7 +125,7 @@ class Integrateur(DateCrDateMod):
                                    primary_key=True, 
                                    editable=False,
                                    max_length = 14)
-    tva_integrateur = models.CharField(_("tva"),max_length = 14, unique=True)
+    tva_integrateur = VATINField(_("tva"),unique=True)
     utilisateur = models.OneToOneField(CustomUser, #onetoonefield
                                     on_delete=models.CASCADE,
                                     unique=True)
@@ -158,7 +159,7 @@ class Client(DateCrDateMod):
                                 unique=True, 
                                 primary_key=True, 
                                 editable=False)
-    tva_cli = models.CharField(_("tva"), max_length = 14)
+    tva_cli = VATINField(_("tva"), unique=True)
     employe = models.ForeignKey(Employe, null=True, on_delete=models.SET_NULL)
     utilisateur = models.OneToOneField(CustomUser,
                                           unique=True, null=True,

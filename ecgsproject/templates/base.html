@@ -1,8 +1,9 @@
 {% load static %}
 {% load i18n %}
+{% load django_simple_cookie_consent_tags %}
 <!DOCTYPE html>
 <html lang="en">
-
+  
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -29,6 +30,8 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+
   
   
 
@@ -38,6 +41,7 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  
 </head>
 
 <body>
@@ -117,36 +121,7 @@
     </section> End Breadcrumbs -->
 
   {% endblock content %}
-
-  <div class="wrapper" style="padding: 32px;">
-    <div class="cookie" style="position: sticky;
-                              
-                              left: 0;
-                              right: 0;
-                              background: #2f3640;
-                              color: #f5f6fa;
-                               padding: 0 32px;
-                               transition: 400ms;">
-      <p>
-        We use cookies in this website to give you the best experience on our
-        site and show you relevant ads. To find out more, read our
-        <a href="#" style="color: #f5f6fa;">privacy policy</a> and <a href="#">cookie policy</a>.
-      </p>
-    
-      <button class="cookie-btn" style="background: #e84118;
-      border: 0;
-      color: #f5f6fa;
-      padding: 12px 48px;
-      font-size: 18px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      cursor: pointer;">
-        Okay
-      </button>
-    </div>
-  </div>
   
-
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
@@ -161,7 +136,7 @@
         <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
       </div>
       <div class="copyright">
-        &copy; Copyright <strong><span>EcoGreenSoft</span></strong>. {% trans 'Tous droits réservés ' %}<u><a href = "{% url 'conditions' %}" >Conditions d'utilisation</a></u> 
+        &copy; Copyright <strong><span>EcoGreenSoft</span></strong>. {% trans 'Tous droits réservés ' %}<u><a href = "{% url 'conditions' %}" >Conditions d'utilisation & Politique de confidentialité</a></u> 
       </div>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
@@ -190,24 +165,34 @@
   <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
 
   <!-- Template Main JS File -->
+  
   <script src="{% static 'assets/js/main.js' %}"></script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-<!--   <script type="text/javascript">
-    const cookieContainer = document.querySelector(".cookie-container");
-    const cookieButton = document.querySelector(".cookie-btn");
-  
-    cookieButton.addEventListener("click", () => {
-      cookieContainer.classList.remove("active");
-      localStorage.setItem("cookieBannerDisplayed", "true");
+  {% display_cookie_consent %}
+  <script>
+    window.addEventListener("load", function(){
+      window.cookieconsent.initialise({
+          "palette": {
+              "popup": {
+                  "background": "#668cff",
+                  "text": "#ffffff"
+              },
+              "button": {
+                  "background": "#6ec083",
+                  "text": "#ffffff"
+              }
+          },
+          "content": {
+              "link": "Conditions d&#x27;utilisation &amp; Politique de confidentialité",
+              "href": "http://localhost:8000/conditions%20d'utilisation/",
+              "dismiss": "Ok",
+              "message": "Les informations recueillies vous concernant font l’objet d’un traitement destiné à : Ecogreensoft sa – sise Rue Principale, 24b à L. 8820 Holtz.\n De manière générale, nous n’utiliserons vos données à caractère personnel que si vous y avez consenti ou lorsque cette utilisation repose sur l’un des fondements juridiques prévus légalement :\n•	La sauvegarde de nos intérêts légitimes ;\n•	La conclusion, la négociation et l’exécution d’un contrat qui nous lie avec vous ;\n•	Le respect d’une obligation légale ;\n•	La préservation de l’intérêt public.\nLes destinataires de ces données sont : Ecogreensoft elle-même, ainsi que ses collaborateurs du produit présent.\nLa durée de conservation des données est de 3 ans conformément à la RGPD.\nVous bénéficiez d’un droit d’accès, de rectification, de portabilité, d’effacement de celles-ci ou une limitation du traitement.\nVous pouvez vous opposer au traitement des données vous concernant et disposez du droit de retirer votre consentement à tout moment en vous adressant à : info@ecgrs.com.\nVous avez la possibilité d’introduire une réclamation auprès d’une autorité de contrôle. Pour de plus amples informations, consultez la rubrique : "
+          },
+          dismissOnScroll: true,
+      })
     });
-  
-    setTimeout(() => {
-      if (!localStorage.getItem("cookieBannerDisplayed")) {
-        cookieContainer.classList.add("active");
-      }
-    }, 2000);
-  </script> -->
+</script>
+
   
 </body>
 

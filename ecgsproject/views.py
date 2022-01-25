@@ -35,7 +35,8 @@ def forms_accueil(request):
             user.save()
             print("user enregistré")
             return redirect('calcul')
-        messages.error(request, "Les informations rentrées sont invalides")
+        else:
+            messages.error(request, "Les informations rentrées sont invalides")
     elif request.method == 'POST' and "submitContact" in request.POST:
         print("contact form")
         formContact = ContactForm(request.POST)

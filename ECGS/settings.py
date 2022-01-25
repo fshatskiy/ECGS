@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'phonenumber_field',
     "django_makemessages_xgettext",
+    'django_simple_cookie_consent',
     
     'ecgsproject.apps.EcgsprojectConfig',
 ]

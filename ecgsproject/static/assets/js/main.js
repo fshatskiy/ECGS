@@ -178,13 +178,13 @@
    * Cookie
    */
 
-   const cookieContainer = document.querySelector(".cookie");
+  /*  const cookieContainer = document.querySelector(".cookie");
    const cookieButton = document.querySelector(".cookie-btn");
  
    cookieButton.addEventListener("click", () => {
      localStorage.setItem("cookieBannerDisplayed", "true");
      cookieContainer.classList.remove("active");
-   });
+   }); */
  
    /* setTimeout(() => {
      if (!localStorage.getItem("cookieBannerDisplayed")) {

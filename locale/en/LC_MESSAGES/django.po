@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 23:34+0100\n"
+"POT-Creation-Date: 2022-01-25 23:18+0100\n"
 "PO-Revision-Date: 2022-01-14 16:57+0018\n"
 "Last-Translator: Anonymous User <admin@admin.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,14 +19,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: .\ECGS\settings.py:156
+#: .\ECGS\settings.py:103
+msgid "Bienvenue sur le site d'administration d'EcoSoft"
+msgstr ""
+
+#: .\ECGS\settings.py:181
 msgid "French"
 msgstr "Français"
 
-#: .\ECGS\settings.py:157
+#: .\ECGS\settings.py:182
 msgid "English"
 msgstr "Anglais"
-
-#: .\ECGS\urls.py:24 .\ECGS\urls.py:30
-msgid "admin/"
-msgstr ""
