@@ -129,6 +129,10 @@ class CustomUserAdmin(DjangoUserAdmin):
             return CustomUser.objects.all()
         print("here33")
         print("CustomUserADMIN filtre")
+        """ if Employe.objects.get(utilisateur__email=request.user)==request.user:
+            print("ok?")
+            return CustomUser.objects.get(employe__utilisateur__email=request.user) """
+        
         return CustomUser.objects.filter(created_by=request.user)
 
 
@@ -285,10 +289,10 @@ class EmployeAdmin(admin.ModelAdmin):
             print("here333empl")
             kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)
         elif db_field.name == "integrateur" and not request.user.is_superuser:
-            print("here333empl")
+            print("here444empl")
             #print("test création Employe :", Integrateur.objects.filter(utilisateur=request.user))
             kwargs["queryset"] = Integrateur.objects.filter(utilisateur=request.user)
-        print("here444empl")
+        print("here555empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -296,7 +300,7 @@ class EmployeAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    """ list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date", "modified_date"]
+    list_display = ["get_nom", "get_prenom", "get_entreprise", "get_email", "get_tel", "tva_cli", "employe", "get_empl_entreprise", "created_by", "created_date", "modified_date"]
     search_fields = ("utilisateur__nom", "utilisateur__prenom", "tva_cli", "utilisateur__entreprise", "utilisateur__email", "utilisateur__fonction",)
     
     
@@ -328,7 +332,7 @@ class ClientAdmin(admin.ModelAdmin):
     def get_tel(self, obj):
         return obj.utilisateur.tel
     get_tel.admin_order_field  = 'utilisateur__tel'  #Allows column order sorting
-    get_tel.short_description = 'Téléphone'  #Renames column head """
+    get_tel.short_description = 'Téléphone'  #Renames column head
     
     # Save models
     def save_model(self, request, obj, form, change):
@@ -362,6 +366,7 @@ class ClientAdmin(admin.ModelAdmin):
         # Affiche les objets créés par le personnel de l'intégrateur connecté (de la même entreprise)
         elif Employe.objects.filter(created_by = request.user).exists():
             # (ne rentre jms dans la codition si on est connectés en tant qu'employé)
+            print("Sarik je t'aime")
             return Client.objects.filter(employe__created_by=request.user)
         print("Clientfin")
         #affiche les clients dont leur employé est l'user courant
@@ -378,13 +383,13 @@ class ClientAdmin(admin.ModelAdmin):
             kwargs["queryset"] = Employe.objects.all()
         elif db_field.name == "employe" and not request.user.is_superuser:
             print("here333empl")
-            print("test :", Employe.objects.filter(utilisateur=request.user))
+            print("test employe:", Employe.objects.filter(utilisateur=request.user))
             kwargs["queryset"] = Employe.objects.filter(utilisateur=request.user)  # employe id_utilisateur
         elif db_field.name == "utilisateur" and not request.user.is_superuser:
-            print("here333empl")
-            print("test :", CustomUser.objects.filter(created_by=request.user))
+            print("here444empl")
+            print("test utilisateur:", CustomUser.objects.filter(created_by=request.user))
             kwargs["queryset"] = CustomUser.objects.filter(created_by=request.user)
-        print("here444empl")
+        print("here555empl")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

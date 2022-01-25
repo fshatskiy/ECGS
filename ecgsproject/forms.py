@@ -11,23 +11,7 @@ from django.utils.translation import ugettext as _
         
 class LoginForm(forms.Form):
     email = forms.EmailField()
-    password = forms.CharField()
-
-class AccueilForm(forms.ModelForm):
-    
-    class Meta:
-        model = CustomUser
-        fields = ("nom", "prenom", "email", "tel", "entreprise",)
-    
-    
-""" class ResultatForm(forms.ModelForm):
-    
-    
-    pass
-    class Meta:
-        model = Resultat
-        fields = (,) """
-    
+    password = forms.CharField()   
     
     
 class RegisterForm(UserCreationForm):
@@ -45,6 +29,12 @@ class RegisterForm(UserCreationForm):
             except ValidationError as error:
                 self.add_error('password1', error)
                 
+                
+class ResultatAccueilForm(forms.ModelForm):
+    
+    class Meta:
+        model = CustomUser
+        fields = ("nom", "prenom", "email", "tel", "entreprise",) 
 
 class ContactForm(forms.Form):
     nom = forms.CharField(max_length = 50)
@@ -61,3 +51,10 @@ class ContactForm(forms.Form):
             'mail_subject' : forms.TextInput(attrs={'class': 'form-control'}),
             'message' : forms.Textarea(attrs={'class': 'form-control'}),
         }
+   
+        
+""" class CalculForm(forms.ModelForm):
+    
+    class Meta:
+        model = Resultat
+        #fields = ("nom", "prenom", "email", "tel", "entreprise",)  """

@@ -11,8 +11,8 @@ admin.site.site_header = 'Portail EcoSoft'
 #app_name = "ecgsproject"
 
 urlpatterns = [ 
-    path('', views.accueil, name='accueil'),
-    path('admin/', views.accueil, name='admin'),
+    path('', views.forms_accueil, name='accueil'),
+    path('admin/', views.forms_accueil, name='admin'),
     path('register/', views.signup, name='register'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'), 
     path('login/', views.loginPage, name='login'),

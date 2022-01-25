@@ -6,38 +6,78 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import BadHeaderError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.db.models.query_utils import Q
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import LoginForm, RegisterForm, AccueilForm, ContactForm
+from .forms import LoginForm, RegisterForm, ResultatAccueilForm, ContactForm
 from django.http import HttpResponse
 
 
 UserModel = get_user_model()
 # Create your views here.
 
-def accueil(request):
-    return render(request, 'index.html')
+def forms_accueil(request):
+    print("forms_accueil")
+    if request.method == 'POST' and "submitResult" in request.POST:
+        print("resultat form")
+        formAccueil = ResultatAccueilForm(request.POST)
+        if formAccueil.is_valid():
+            data = formAccueil.cleaned_data['email']
+            associated_users = CustomUser.objects.filter(Q(email=data))
+            if associated_users.exists():
+                messages.error(request, 'Cette adresse email a déjà été utilisée.')
+                return redirect('accueil') #METTRE '#cta'
+            user = formAccueil.save(commit=False)
+            user.is_active = False
+            user.save()
+            print("user enregistré")
+            return redirect('calcul')
+        messages.error(request, "Les informations rentrées sont invalides")
+    elif request.method == 'POST' and "submitContact" in request.POST:
+        print("contact form")
+        formContact = ContactForm(request.POST)
+        if formContact.is_valid():
+            
+            #envoi du mail
+            
+            """ message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            }) """
+            
+            mail_subject = "Website Info Contact"
+            body = {
+            'nom': formContact.cleaned_data['nom'],
+            'prenom': formContact.cleaned_data['prenom'],
+            'adr_email': formContact.cleaned_data['adr_email'],
+            'message': formContact.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+            
+            to_email = formContact.cleaned_data['adr_email']
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            
 
-
-""" class CustomLoginView(LoginView):
-    #form_class = LoginForm
-    template_name = 'login.html'
-    fields = '__all__'
-    redirect_authenticated_user = True
-    
-    #def user_is_active(self, user):
-    if user.is_active:
-            messages.success('Votre compte a bien été activé.')
-        else:
-            messages.warning('Votre compte n\'a pas encore été approuvé par l\'administrateur du site.')
-        return reverse_lazy('accueil')
-        
-    def get_success_url(self):
-        return reverse_lazy('admin') """
+            try:
+                #send_mail(mail_subject, message, 'admin@example.com', ['admin@example.com'])
+                email.send()
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            messages.success(request, 'Votre message a bien été envoyé. Un de nos collaborateurs vous contactera sous-peu. ')
+            return redirect ("accueil")
+        messages.error(request, "Les informations rentrées sont invalides")
+            
+    formAccueil = ResultatAccueilForm()
+    formContact = ContactForm()
+    print("return fin")
+    return render(request, 'index.html', {'formAccueil': formAccueil, 'formContact': formContact,})
 
 
 #mettre en place les if : sécurité
@@ -127,51 +167,8 @@ def activate(request, uidb64, token):
 def conditions(request):
     return render(request, 'politiques.html')
 
-def resultat_accueil(request):
-    if request.method == 'POST':
-        print("resultat_accueil")
-        print("post")
-        form = AccueilForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data['email']
-            associated_users = CustomUser.objects.filter(Q(email=data))
-            if associated_users.exists():
-                messages.error(request, 'Cette adresse email a déjà été utilisée.')
-                return redirect('accueil') #METTRE '#cta'
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            print("user enregistré")
-            return redirect('calcul')
-    else:
-        form = AccueilForm()
-    return render(request, 'calcul.html', {'form': form})
-
 
 def calcul(request):
     if request.user.is_authenticated:
         return redirect('accueil')
     return render(request, 'calcul.html')
-
-def contact(request):
-    """ if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            mail_subject = "Website Info Contact"
-            body = {
-            'nom': form.cleaned_data['nom'],
-            'prenom': form.cleaned_data['prenom'],
-            'adr_email': form.cleaned_data['adr_email'],
-            'message': form.cleaned_data['message'],
-            }
-            message = "\n".join(body.values())
-
-            try:
-                send_mail(mail_subject, message, 'admin@example.com', ['admin@example.com'])
-            except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            messages.success(request, 'Votre message a bien été envoyé. Un de nos collaborateurs vous contactera sous-peu. ')
-            return redirect ("accueil")
-         """
-    form = ContactForm()
-    return render(request, "index.html", {'form':form})
