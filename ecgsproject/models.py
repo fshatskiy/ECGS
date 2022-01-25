@@ -75,7 +75,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     tel = PhoneNumberField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
     entreprise = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
     fonction = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
-
+    
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ['nom', 'prenom', 'tel', 'entreprise', 'fonction']
