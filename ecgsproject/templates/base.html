@@ -51,13 +51,11 @@
     <div class="container d-flex justify-content-center justify-content-md-between">
       <div class="contact-info d-flex align-items-center">
         <i class="bi bi-envelope-fill"></i><a href="mailto:info@ecgrs.com">info@ecgrs.com</a>
-        <i class="bi bi-phone-fill phone-icon"></i> +1 5589 55488 55
+        <!-- <i class="bi bi-phone-fill phone-icon"></i> +1 5589 55488 55 -->
       </div>
       <div class="social-links d-none d-md-block">
-        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
+        <a href="https://www.facebook.com/profile.php?id=100063105766120" class="facebook"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.linkedin.com/company/ecogreensoft" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
       </div>
     </div>
   </section>
@@ -71,10 +69,10 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto " href="#hero">{% trans 'Accueil' %}</a></li>
-          <li><a class="nav-link scrollto" href="#about">{% trans 'À propos' %}</a></li>
-          <li><a class="nav-link scrollto" href="#services">{% trans 'Services' %}</a></li>
-          <li><a class="nav-link scrollto " href="#portfolio">{% trans 'Portfolio' %}</a></li>
-          <li><a class="nav-link scrollto" href="#team">{% trans 'Équipe' %}</a></li>
+          <li><a class="nav-link scrollto" href="#about">{% trans 'EcoSoft' %}</a></li>
+          <li><a class="nav-link scrollto" href="#cta">{% trans 'Calculateur' %}</a></li>
+          <li><a class="nav-link scrollto " href="#about2">{% trans 'Le créateur' %}</a></li>
+          <li><a class="nav-link scrollto" href="#contact">{% trans 'Contact' %}</a></li>
           <li class="dropdown"><a href="#"><span>Langues</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               {% get_current_language as LANGUAGE_CODE %}
@@ -87,7 +85,6 @@
               {% endfor %}
             </ul>
           </li>
-          <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
           {% if request.user.is_authenticated %}
           <li><b class="nav-link scrollto">{{request.user}}</b></li>
           <li><a style="margin-left: 10px;" class="getstarted scrollto" href="{% url 'logout' %}">{% trans 'Se déconnecter' %}</a></li>

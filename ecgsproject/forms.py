@@ -6,6 +6,7 @@ from django import forms
 from .models import Resultat, CustomUser
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from phonenumber_field.modelfields import PhoneNumberField
 
     
         
@@ -35,6 +36,13 @@ class ResultatAccueilForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ("nom", "prenom", "email", "tel", "entreprise",) 
+        
+    """ def clean_tel(self, *args, **kwargs):
+        tel = self.cleaned_data.get("tel")
+        if tel.startswith("+"):
+            return tel
+        else:
+            raise forms.ValidationError("Le numéro de téléphone doit commencer par '+' suivi du code national") """
 
 class ContactForm(forms.Form):
     nom = forms.CharField(max_length = 50)

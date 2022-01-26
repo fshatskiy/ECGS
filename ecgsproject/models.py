@@ -91,7 +91,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     class Meta:
         db_table = 'ecgsproject_customuser'
         # Add verbose name
-        verbose_name_plural = _('Utilisateurs')
+        verbose_name_plural = _('Données personnelles')
 
 class Resultat(models.Model):
     TYPE = (
@@ -152,6 +152,8 @@ class Employe(DateCrDateMod):
     def __str__(self):
         return "%s %s" % (self.utilisateur.nom, self.utilisateur.prenom)
         
+    class Meta:
+        verbose_name_plural = _('Vendeurs')
 
     
 class Client(DateCrDateMod):

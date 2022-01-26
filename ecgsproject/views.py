@@ -60,9 +60,8 @@ def forms_accueil(request):
             }
             message = "\n".join(body.values())
             
-            to_email = formContact.cleaned_data['adr_email']
             email = EmailMessage(
-                mail_subject, message, to=[to_email]
+                mail_subject, message, to=["ecgstest@gmail.com"]
             )
             
 
