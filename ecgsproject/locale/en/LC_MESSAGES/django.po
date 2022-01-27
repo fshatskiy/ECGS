@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 13:54+0100\n"
+"POT-Creation-Date: 2022-01-27 23:19+0100\n"
 "PO-Revision-Date: 2022-01-27 11:22+0018\n"
 "Last-Translator: Anonymous User <admin@admin.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: .\ecgsproject\admin.py:98
+#: .\ecgsproject\admin.py:101
 msgid "Personal info"
 msgstr ""
 
-#: .\ecgsproject\admin.py:101
+#: .\ecgsproject\admin.py:104
 msgid "Permissions"
 msgstr ""
 
@@ -47,75 +47,67 @@ msgstr ""
 msgid "téléphone"
 msgstr ""
 
-#: .\ecgsproject\models.py:94
+#: .\ecgsproject\models.py:95
 msgid "Données personnelles"
 msgstr "Personal data"
 
-#: .\ecgsproject\models.py:98
-msgid "Mono-horaire"
-msgstr ""
-
-#: .\ecgsproject\models.py:99
-msgid "Bi-horaire"
-msgstr ""
-
-#: .\ecgsproject\models.py:128 .\ecgsproject\models.py:164
+#: .\ecgsproject\models.py:127 .\ecgsproject\models.py:163
 msgid "tva"
 msgstr ""
 
-#: .\ecgsproject\models.py:132 .\ecgsproject\models.py:169
+#: .\ecgsproject\models.py:131 .\ecgsproject\models.py:168
 msgid "adresse de l'entreprise"
 msgstr ""
 
-#: .\ecgsproject\models.py:134 .\ecgsproject\models.py:150
+#: .\ecgsproject\models.py:133 .\ecgsproject\models.py:149
 msgid "lieu de sa fonction"
 msgstr ""
 
-#: .\ecgsproject\models.py:135
+#: .\ecgsproject\models.py:134
 msgid "téléphone de contact"
 msgstr ""
 
-#: .\ecgsproject\models.py:156
+#: .\ecgsproject\models.py:155
 msgid "Vendeurs"
 msgstr ""
 
-#: .\ecgsproject\models.py:182
+#: .\ecgsproject\models.py:181
 msgid "numéro du contrat"
 msgstr ""
 
-#: .\ecgsproject\models.py:184 .\ecgsproject\models.py:220
+#: .\ecgsproject\models.py:183 .\ecgsproject\models.py:219
 msgid "commentaires"
 msgstr ""
 
-#: .\ecgsproject\models.py:191
+#: .\ecgsproject\models.py:190
 msgid "Proposition"
 msgstr ""
 
-#: .\ecgsproject\models.py:192
+#: .\ecgsproject\models.py:191
 msgid "En négociation"
 msgstr ""
 
-#: .\ecgsproject\models.py:193
+#: .\ecgsproject\models.py:192
 msgid "Signé"
 msgstr ""
 
-#: .\ecgsproject\models.py:194
+#: .\ecgsproject\models.py:193
 msgid "Arrêté"
 msgstr ""
 
-#: .\ecgsproject\models.py:212
+#: .\ecgsproject\models.py:211
 msgid "numéro licence"
 msgstr ""
 
-#: .\ecgsproject\models.py:216
+#: .\ecgsproject\models.py:215
 msgid "date d'achat de licence"
 msgstr ""
 
-#: .\ecgsproject\models.py:217
+#: .\ecgsproject\models.py:216
 msgid "période de validité"
 msgstr ""
 
-#: .\ecgsproject\models.py:218
+#: .\ecgsproject\models.py:217
 msgid "nombre de licences"
 msgstr ""
 
@@ -184,6 +176,70 @@ msgid ""
 "plus amples informations, consultez la rubrique :"
 msgstr ""
 
+#: .\ecgsproject\templates\calcul.html:14
+#: .\ecgsproject\templates\index.html:118
+msgid "Vérifier votre consommation annuelle"
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:15
+msgid "Ce calcul se base sur les données suivantes :"
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:17
+msgid ""
+"\n"
+"                        <li>Heure de prestation moyenne d’un salarié belge : "
+"1584h</li>\n"
+"                        <li>Nombre d’heures total annuel : 8760h</li>\n"
+"                        <li>Utilisation inutile de la consommation : 7182h</"
+"li>\n"
+"                        <li>Un commutateur POE consomme en moyenne 50 wH</"
+"li>\n"
+"                        <li>Chaque périphérique consomme +- 5.79 wH</li>\n"
+"                        "
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:28
+msgid ""
+"Nombre d'appareils utilisant les commutateurs POE dans votre entreprise :"
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:32
+msgid "Nombre de commutateurs utilisés (plus ou moins) :"
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:36
+msgid "Énergie inutilisée par an : "
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:40
+msgid "Énergie consommée inutilement : "
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:44
+msgid "Économies perdues par an : "
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:49
+#: .\ecgsproject\templates\index.html:356 .\ecgsproject\templates\login.html:27
+#: .\ecgsproject\templates\password_reset.html:29
+#: .\ecgsproject\templates\register.html:68
+msgid "Envoyer"
+msgstr ""
+
+#: .\ecgsproject\templates\calcul.html:52
+msgid ""
+"\n"
+"                            <li>Le calcul ci-dessus ne tient pas compte  de "
+"l’effet cascade  </li>\n"
+"                            <li>Effet cascade : Chaque Watt économisé au "
+"niveau de l'équipement produit un effet de cascade ascendant. </br>\n"
+"                                Ex : 1w dégagé coûte +- 2,84w en "
+"refroidissement\n"
+"                                </li>\n"
+"                            "
+msgstr ""
+
 #: .\ecgsproject\templates\index.html:20
 msgid "Bienvenue chez"
 msgstr ""
@@ -249,15 +305,12 @@ msgid ""
 "tous vos périphériques. "
 msgstr ""
 
-#: .\ecgsproject\templates\index.html:118
-msgid "Tester notre produit en direct"
-msgstr ""
-
 #: .\ecgsproject\templates\index.html:119
 msgid ""
 " Ici même, vous avez la possibilité de faire un test provisoire vous donnant "
 "ainsi \n"
-"                  un premier regard sur le produit. "
+"                  un premier regard sur le produit et votre consommation "
+"annuelle. "
 msgstr ""
 
 #: .\ecgsproject\templates\index.html:121
@@ -416,12 +469,6 @@ msgstr ""
 
 #: .\ecgsproject\templates\index.html:345
 msgid "Sujet"
-msgstr ""
-
-#: .\ecgsproject\templates\index.html:356 .\ecgsproject\templates\login.html:27
-#: .\ecgsproject\templates\password_reset.html:29
-#: .\ecgsproject\templates\register.html:68
-msgid "Envoyer"
 msgstr ""
 
 #: .\ecgsproject\templates\login.html:16
@@ -1009,44 +1056,44 @@ msgstr ""
 msgid "Fonction"
 msgstr ""
 
-#: .\ecgsproject\views.py:32 .\ecgsproject\views.py:118
+#: .\ecgsproject\views.py:32 .\ecgsproject\views.py:121
 msgid "Cette adresse email a déjà été utilisée."
 msgstr ""
 
-#: .\ecgsproject\views.py:40 .\ecgsproject\views.py:68
+#: .\ecgsproject\views.py:41 .\ecgsproject\views.py:69
 msgid "Les informations rentrées sont invalides"
 msgstr ""
 
-#: .\ecgsproject\views.py:66
+#: .\ecgsproject\views.py:67
 msgid ""
 "Votre message a bien été envoyé. Un de nos collaborateurs vous contactera "
 "sous-peu. "
 msgstr ""
 
-#: .\ecgsproject\views.py:89
+#: .\ecgsproject\views.py:90
 msgid "L'utilisateur avec cette adresse email n'existe pas."
 msgstr ""
 
-#: .\ecgsproject\views.py:96 .\ecgsproject\views.py:98
+#: .\ecgsproject\views.py:99 .\ecgsproject\views.py:101
 msgid ""
 "Les informations sont invalides ou votre compte n'a pas encore été activé "
 "par l'administrateur"
 msgstr ""
 
-#: .\ecgsproject\views.py:126
+#: .\ecgsproject\views.py:129
 msgid "Activation de votre compte."
 msgstr ""
 
-#: .\ecgsproject\views.py:140
+#: .\ecgsproject\views.py:143
 msgid "Veuillez confirmer votre adresse email afin de terminer l'inscription"
 msgstr ""
 
-#: .\ecgsproject\views.py:162
+#: .\ecgsproject\views.py:164
 msgid ""
 "Votre compte a bien été vérifié. Veuillez maintenant vérifier si "
 "l'administrateur a activé votre compte en vous connectant."
 msgstr ""
 
-#: .\ecgsproject\views.py:165
+#: .\ecgsproject\views.py:167
 msgid "Le lien d'activation n'est plus valide ! Veuillez vous réinscrire"
 msgstr ""
