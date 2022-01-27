@@ -72,10 +72,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(auto_now=True)
     tel = PhoneNumberField(_("téléphone"),max_length=20, validators=[RegexValidator()])#changer lorsque register.html sera complet
     entreprise = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
     fonction = models.CharField(max_length=200, blank=True)#changer lorsque register.html sera complet
+    a_contacter = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
@@ -93,7 +94,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, DateCrDateMod):
         # Add verbose name
         verbose_name_plural = _('Données personnelles')
 
-class Resultat(models.Model):
+""" class Resultat(models.Model):
     TYPE = (
         (_('Mono-horaire'), _('Mono-horaire')),
         (_('Bi-horaire'), _('Bi-horaire')),
@@ -107,17 +108,15 @@ class Resultat(models.Model):
                                     on_delete=models.CASCADE,
                                     unique=True)
     nb_appareils = models.PositiveIntegerField(null=True, blank=True, editable=False)#test
-    #Nb_app * conso 5.79w/h = total conso en w/h + la conso du switch 50w/h
-    prix_kwh = models.FloatField(default=0.25, blank=True, editable=False)#+-25 centimes kwh
     type_compteur = models.CharField(max_length=50, editable=False, choices=TYPE) #a simple tarif / bi-horaire
-    nb_conges = models.PositiveIntegerField(null=True, blank=True, editable=False)
     result_pourcent = models.FloatField(blank=True, editable=False)
+    result_wh = models.FloatField(blank=True, editable=False)
     result_euro = models.FloatField(blank=True, editable=False)
     date = models.DateTimeField(auto_now=True, editable=False)#test
     
     
     def __str__(self):
-        return "%s" % (self.id_resultat)
+        return "Client intéressé : %s | %s" % (self.utilisateur, self.id_resultat) """
 
 class Integrateur(DateCrDateMod):
     id_integrateur = models.UUIDField(default=uuid.uuid4, 

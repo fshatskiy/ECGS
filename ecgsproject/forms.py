@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import password_validation
 from .models import CustomUser
 from django import forms
-from .models import Resultat, CustomUser
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from phonenumber_field.modelfields import PhoneNumberField
@@ -22,13 +21,13 @@ class RegisterForm(UserCreationForm):
              
         
         #fonctionne ?
-    def clean_password1(self):
+    """ def clean_password1(self):
         password = self.cleaned_data.get('password1')
         if password:
             try:
                 password_validation.validate_password(password, self.instance)
             except ValidationError as error:
-                self.add_error('password1', error)
+                self.add_error('password1', error) """
                 
                 
 class ResultatAccueilForm(forms.ModelForm):
@@ -61,8 +60,17 @@ class ContactForm(forms.Form):
         }
    
         
-""" class CalculForm(forms.ModelForm):
+class CalculForm(forms.Form):
     
-    class Meta:
-        model = Resultat
-        #fields = ("nom", "prenom", "email", "tel", "entreprise",)  """
+    
+    nb_appareils = forms.IntegerField()
+    nb_switchs = forms.IntegerField()
+    #adr_email = forms.EmailField(max_length = 150)
+    #mail_subject = forms.CharField(max_length = 50)
+    #message = forms.CharField(max_length = 2000)
+    """ class Meta: 
+        widgets = {
+            'nb_appareils' : forms.TextInput(attrs={'class': 'form-control'}),
+            'type_compteur' : forms.ChoiceField(attrs={'class': 'form-control'}),
+            
+        } """

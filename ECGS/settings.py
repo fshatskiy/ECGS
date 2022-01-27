@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     "django_makemessages_xgettext",
     'django_simple_cookie_consent',
+    'rosetta',
     
     'ecgsproject.apps.EcgsprojectConfig',
 ]
@@ -105,6 +106,7 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
     "language_chooser": True,
     "related_modal_active": True,
+    "order_with_respect_to": ["ecgsproject.CustomUser", "ecgsproject.Integrateur", "ecgsproject.Employe", "ecgsproject.Client", "ecgsproject.Contrat", "ecgsproject.Resultat"],
 }
 
 
@@ -183,7 +185,7 @@ LANGUAGES = (
 )
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale'),
+    os.path.join(BASE_DIR, 'ecgsproject/locale'),
 )
 
 LOGIN_URL = 'login'

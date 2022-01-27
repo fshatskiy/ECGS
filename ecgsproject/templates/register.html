@@ -13,46 +13,59 @@
         <div class="row justify-content-center">  
             <div class="col-md-5 shadow-sm p-3 mb-5 bg-white rounded"> 
                 {% include 'messages.html' %} 
-                <h2 style="text-align: center; margin-bottom: 25px;">Inscription</h2>
+                <h2 style="text-align: center; margin-bottom: 25px;">{% trans "Inscription" %}</h2>
                 <form method="post">  
                     {% csrf_token %}
                     <div class="form-group">  
-                        <label for="nom">Nom</label>  
+                        <label for="nom">{% trans "Nom" %}</label>  
                         <input class="form-control" id="nom" required name="nom">  
                     </div> 
                     <div class="form-group">  
-                        <label for="prenom">Prenom</label>  
+                        <label for="prenom">{% trans "Prenom" %}</label>  
                         <input class="form-control" id="prenom" required  name="prenom">  
                     </div> 
                     <div class="form-group">  
-                        <label for="email">Adresse email :</label>  
+                        <label for="email">{% trans "Adresse email" %}</label>  
                         <input type="email" class="form-control" id="email" required  name="email" placeholder="example@example.com">  
                     </div>  
                     <div class="form-group">  
-                        <label for="pwd1">Mot de passe :</label>  
+                        <label for="pwd1">{% trans "Mot de passe" %}</label>  
                         <input type="password" class="form-control" id="pwd1" required name="password1" placeholder="min 6 caractères">  
+                        <ul style="font-size:small;">
+                            {% blocktrans %}
+                            <li>Votre mot de passe ne peut pas ressembler à vos autres informations personnelles.</li>
+                            <li>Votre mot de passe doit contenir au minimum 8 caractères.</li>
+                            <li>Votre mot de passe ne peut pas être un mot de passe couramment utilisé.</li>
+                            <li>Votre mot de passe ne peut pas être entièrement numérique.</li>
+                            {% endblocktrans %}
+                        </ul>
                     </div>  
                     <div class="form-group">  
-                        <label for="pwd2">Confirmez le mot de passe :</label>  
+                        <label for="pwd2">{% trans "Confirmez le mot de passe" %}</label>  
                         <input type="password" class="form-control" id="pwd2" required  name="password2">  
                     </div>
                     <div class="form-group">  
-                        <label for="tel">Numéro de téléphone</label>  
+                        <label for="tel">{% trans "Numéro de téléphone" %}</label>  
                         <input class="form-control" id="tel" required name="tel" placeholder="exemple : +32412345678"> <!-- vérifier si fonctionne avec le "+" --> 
+                        <ul style="font-size:small;">
+                            {% blocktrans %}
+                            <li>Commençant par "+", suivi du code national </li>
+                            {% endblocktrans %}
+                        </ul>
                     </div> 
                     <div class="form-group">  
-                        <label for="entreprise">Entreprise</label>  
+                        <label for="entreprise">{% trans "Entreprise" %}</label>  
                         <input class="form-control" id="entreprise" required name="entreprise">  
                     </div> 
                     <div class="form-group">  
-                        <label for="fonction">Fonction</label>  
+                        <label for="fonction">{% trans "Fonction" %}</label>  
                         <input class="form-control" id="fonction"  name="fonction">  
                     </div> 
                     <div class="form-group"> 
                         <div class="g-recaptcha" data-sitekey="6LensC0eAAAAACgGQlxK2ScG3gDWk4nJhkK59H0v"></div>
                     </div>
                     <!-- A AJOUTER LE RESTE -->
-                    <button type="submit" class="submitBtn">Envoyer</button>  
+                    <button type="submit" class="submitBtn">{% trans "Envoyer" %}</button>  
                 </form>  
             </div>  
         </div>  

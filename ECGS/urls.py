@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.utils.translation import ugettext_lazy as _
 
+from ECGS import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,3 +33,8 @@ urlpatterns += i18n_patterns (
     path('admin/', admin.site.urls),
     path('', include('ecgsproject.urls')),
 )
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('rosetta/', include('rosetta.urls'))
+    ]

@@ -17,8 +17,9 @@
         <div class="carousel-item active" style="background-image: url({% static 'assets/img/slide/slide-1.jpg' %})">
           <div class="carousel-container">
             <div class="container">
-              <h2 class="animate__animated animate__fadeInDown">Welcome to <span>EcoGreen</span></h2>
-              <p class="animate__animated animate__fadeInUp">test idées : page qui défile : "Savez-vous que lorsque vous quittez le lieu de votre entreprise, une partie de l'énergie est consommée pour rien ?" etc... OU présenter directement le produit.</p>
+              <h2 class="animate__animated animate__fadeInDown">{% trans "Bienvenue chez"  %}<span>EcoSoft </span></h2>
+              <h4 class="animate__animated animate__fadeInUp" style="color:white;">{% trans "Pensez à toute cette énergie consommée inutilement pendant les heures d'inoccupation dans vos entreprises." %}</h4>
+              <!-- Savez-vous que lorsque vous quittez le lieu de votre entreprise, une partie de l'énergie est consommée pour rien ? -->
               <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a> -->
             </div>
           </div>
@@ -31,8 +32,8 @@
             
             <div class="container">
               
-              <h2 class="animate__animated animate__fadeInDown">Lorem Ipsum Dolor</h2>
-              <p class="animate__animated animate__fadeInUp">Ut velit est quam dolor ad a aliquid qui aliquid. Sequi ea ut et est quaerat sequi nihil ut aliquam. Occaecati alias dolorem mollitia ut. Similique ea voluptatem. Esse doloremque accusamus repellendus deleniti vel. Minus et tempore modi architecto.</p>
+              <h2 class="animate__animated animate__fadeInDown">{% trans "Responsabilité" %}</h2>
+              <h4 class="animate__animated animate__fadeInUp" style="color:white;">{% trans "Voulez-vous faire partie de ceux qui laissent une empreinte écologique ?" %}</h4>
               <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a> -->
             </div>
           </div>
@@ -42,8 +43,8 @@
         <div class="carousel-item" style="background-image: url({% static 'assets/img/slide/slide-3.jpg' %})">
           <div class="carousel-container">
             <div class="container">
-              <h2 class="animate__animated animate__fadeInDown">Sequi ea ut et est quaerat</h2>
-              <p class="animate__animated animate__fadeInUp">Ut velit est quam dolor ad a aliquid qui aliquid. Sequi ea ut et est quaerat sequi nihil ut aliquam. Occaecati alias dolorem mollitia ut. Similique ea voluptatem. Esse doloremque accusamus repellendus deleniti vel. Minus et tempore modi architecto.</p>
+              <h2 class="animate__animated animate__fadeInDown">{% trans "Économie" %}</h2>
+              <h4 class="animate__animated animate__fadeInUp" style="color:white;">{% trans "Ce sera votre résultat."  %}</h4>
               <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a> -->
             </div>
           </div>
@@ -85,17 +86,17 @@
               OU ALORS VOTRE EQUIPE
             </p> -->
             <ul>
-              <li><i class="bi bi-check-circled"></i><i><b>Notre mission</b></i></li>
-                <p>Permettre de réduire la consommation électrique et l’impact carbone tout en économisant 
-                de l’énergie et les coûts aux entreprises. </p>
-              <li><i class="bi bi-check-circled"></i><i><b>Comment ?</b></i></li>
-                <p>Un commutateur POE (Power Over Ethernet) est un commutateur qui permet de faire passer à la fois l'électricité et les donées par votre câble. 
-                Voyez cela comme une sorte de "super multi-prise".</p>
-                <p>Dans certains cas, ils alimentent des périphériques comme Téléphone IP, caméras de surveillance, points d'accès... 
-                  Ce qui nous oblige à laisser ces commutateurs allumés 24h/24.
+              <li><i class="bi bi-check-circled"></i><i><b>{% trans "Notre mission" %}</b></i></li>
+                <p>{% blocktrans %} Permettre de réduire la consommation électrique et l’impact carbone tout en économisant 
+                de l’énergie et les coûts aux entreprises.  {% endblocktrans %}</p>
+              <li><i class="bi bi-check-circled"></i><i><b>{% trans "Comment ?" %}</b></i></li>
+                <p>{% blocktrans %} Un commutateur POE (Power Over Ethernet) est un commutateur qui permet de faire passer à la fois l'électricité et les données par votre câble. 
+                Voyez cela comme une sorte de 'super multi-prise'. {% endblocktrans %}</p>
+                <p>{% blocktrans %} Dans certains cas, ils alimentent des périphériques comme Téléphone IP, caméras de surveillance, points d'accès... 
+                  Ce qui nous oblige à laisser ces commutateurs allumés 24h/24. {% endblocktrans %}
                 </p>
-                <p> C'est là qu'entre en jeu EcoSoft. Ce logiciel vous permet d'automatiser l’arrêt et le démarrage du courant 
-                électrique des ports des commutateurs PoE qui alimentent tous vos périphériques.</p>
+                <p> {% blocktrans %} C'est là qu'entre en jeu EcoSoft. Ce logiciel vous permet d'automatiser l’arrêt et le démarrage du courant 
+                électrique des ports des commutateurs PoE qui alimentent tous vos périphériques. {% endblocktrans %}</p>
               <li><i class="bi bi-check-circled"></i></li>
             </ul>
             <p>
@@ -114,32 +115,32 @@
       <div class="container" style="margin-top: 50px;">  
         <div class="row justify-content-center">  
             <div class="col-md-8 shadow-sm p-3 mb-5 ">  
-                <h2 style="text-align: center;  margin-bottom: 25px;">Tester notre produit en direct</h2>  
-                <p style="text-align: center;"> Ici même, vous avez la possibilité de faire un test provisoire vous donnant ainsi 
-                  un premier regard sur le produit.</br>
-                  Afin de réaliser ce test, nous aurions besoin de vos coordonnées afin de pouvoir vous contacter par la suite.</p>
+                <h2 style="text-align: center;  margin-bottom: 25px;">{% trans "Vérifier votre consommation annuelle" %}</h2>  
+                <p style="text-align: center;"> {% blocktrans %} Ici même, vous avez la possibilité de faire un test provisoire vous donnant ainsi 
+                  un premier regard sur le produit et votre consommation annuelle. {% endblocktrans %}</br>
+                  {% blocktrans %} Afin de réaliser ce test, nous aurions besoin de vos coordonnées afin de pouvoir vous contacter par la suite. {% endblocktrans %}</p>
                 
                   <form method="post">  
                     {% csrf_token %}
                      
                     <div class="mb-3 position-relative form-group ">  
-                        <label for="nom" style="color:white;">Nom</label>  
+                        <label for="nom" style="color:white;">{% trans "Nom" %}</label>  
                         <input class="form-control" id="nom" required  name="nom">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
-                        <label for="prenom" style="color:white;">Prenom</label>  
+                        <label for="prenom" style="color:white;">{% trans "Prenom" %}</label>  
                         <input class="form-control" id="prenom" required  name="prenom">  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
-                      <label for="email" style="color:white;">Adresse email :</label>  
+                      <label for="email" style="color:white;">{% trans "Adresse email" %}</label>  
                       <input type="email" class="form-control" id="email" required  name="email" placeholder="exemple@exemple.com" required>  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
-                        <label for="tel" style="color:white;">Numéro de téléphone</label>  
+                        <label for="tel" style="color:white;">{% trans "Numéro de téléphone" %}</label>  
                         <input class="form-control" id="tel" required  name="tel" placeholder="exemple : +32485123456" required>  
                     </div> 
                     <div class="mb-3 position-relative form-group">  
-                        <label for="entreprise" style="color:white;">Entreprise</label>  
+                        <label for="entreprise" style="color:white;">{% trans "Entreprise" %}</label>  
                         <input class="form-control" id="entreprise" required  name="entreprise" required>  
                     </div> 
                     <div class="form-group"> 
@@ -154,7 +155,7 @@
                                                 border: 2px solid #fff;
                                                 color: #fff;
                                                 background-color:#5cb874;
-                                                border-radius: 4px;">Faire le test
+                                                border-radius: 4px;">{% trans "Faire le test" %}
                         </button>  
                     </div> 
                   </form>  
@@ -170,9 +171,9 @@
       <div class="container">
 
         <div class="section-title">
-          <h4>À propos du créateur</h4>
+          <h4>{% trans "À propos du créateur" %}</h4>
           <h2>EcoGreenSoft</h2>
-          <p>Optimiser vos infrastructures - Avec les solutions les plus adaptées à votre business</p>
+          <p>{% trans "Optimiser vos infrastructures - Avec les solutions les plus adaptées à votre business" %}</p>
         </div>
 
         <div class="row">
@@ -180,18 +181,18 @@
             <img src="{% static 'assets/img/ecogreensoftvert.png' %}" class="img-fluid" alt="" style="margin-top: 70px;">
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
-            <h3>Electricité générale - Câblage informatique - Mise en conformité - Projet sur mesure - Gestion d'infrastructure technique</h3>
+            <h3>{% trans "Electricité générale - Câblage informatique - Mise en conformité - Projet sur mesure - Gestion d'infrastructure technique" %}</h3>
             <!-- <p class="fst-italic">
               OU ALORS VOTRE EQUIPE
             </p> -->
             <ul>
-              <li><i class="bi bi-check-circled"></i> Avec 20 000 points informatiques annuels de  catégorie 6, 6A, 7 installés au courant de l'année 2021, 
-                EcogreenSoft peut aisément répondre aux  différentes demandes du marché.</li>
-              <li><i class="bi bi-check-circled"></i> Gestion de l'infrastructure informatique de 40 sites  (3000 utilisateurs) pour 
-                différents clients qui nous font confiance depuis plusieurs années. </li>
-              <li><i class="bi bi-check-circled"></i> Remises en conformité  et nouvelles installations électriques pour nos clients industriels et tertiaires.</li>
-              <li><i class="bi bi-check-circled"></i> Développement de solutions logicielles et hardware permettant à nos clients d'anticiper les changements 
-                techniques et économiques propres à leur marché. </li>
+              <li><i class="bi bi-check-circled"></i> {% blocktrans %} Avec 20 000 points informatiques annuels de  catégorie 6, 6A, 7 installés au courant de l'année 2021, 
+                EcogreenSoft peut aisément répondre aux  différentes demandes du marché. {% endblocktrans %}</li>
+              <li><i class="bi bi-check-circled"></i> {% blocktrans %} Gestion de l'infrastructure informatique de 40 sites  (3000 utilisateurs) pour 
+                différents clients qui nous font confiance depuis plusieurs années. {% endblocktrans %} </li>
+              <li><i class="bi bi-check-circled"></i> {% blocktrans %} Remises en conformité  et nouvelles installations électriques pour nos clients industriels et tertiaires.{% endblocktrans %}</li>
+              <li><i class="bi bi-check-circled"></i> {% blocktrans %} Développement de solutions logicielles et hardware permettant à nos clients d'anticiper les changements 
+                techniques et économiques propres à leur marché. {% endblocktrans %}</li>
             </ul>
           </div>
         </div>
@@ -208,13 +209,13 @@
 
           <div class="col-lg-4 col-md-6 content-item">
             <span>01</span>
-            <h4>Data - Electricité - Sécurité</h4>
+            <h4>{% trans "Data - Electricité - Sécurité" %}</h4>
             <ul style="color: #aaaaaa;">
               <li>
-                Installation & mise à niveau d'infrastructure informatique (cuivre - fibre optique) et électrique
+                {% trans "Installation & mise à niveau d'infrastructure informatique (cuivre - fibre optique) et électrique" %}
               </li>
               <li>
-                Sécurisation ICT - contrôle d'accès bâtiment et protection d'armoire technique 
+                {% trans "Sécurisation ICT - contrôle d'accès bâtiment et protection d'armoire technique"  %}
               </li>
             </ul>
           </div>
@@ -224,32 +225,32 @@
             <h4>Services - Facility management </h4>
             <ul style="color: #aaaaaa;">
               <li>
-                Maintien de vos infrastructures techniques 
+                {% trans "Maintien de vos infrastructures techniques"  %}
               </li>
               <li>
-                Mise à jour de votre documentation technique à chaque changement de votre infrastructure (MAC)
+                {% trans "Mise à jour de votre documentation technique à chaque changement de votre infrastructure (MAC)" %}
               </li>
               <li>
-                Service support 24 / 7 personnalisé
+                {% trans "Service support 24 / 7 personnalisé" %}
               </li>
             </ul>
           </div>
 
           <div class="col-lg-4 col-md-6 content-item">
             <span>03</span>
-            <h4>Conseil - Gestion de projet</h4>
+            <h4>{% trans "Conseil - Gestion de projet" %}</h4>
             <ul style="color: #aaaaaa;">
               <li>
-                Etude des besoins métier
+                {% trans "Etude des besoins métier" %}
               </li>
               <li>
-                Rédaction de CdC
+                {% trans "Rédaction de CdC" %}
               </li>
               <li>
-                Suivi technique de projet interne/externe
+                {% trans "Suivi technique de projet interne/externe" %}
               </li>
               <li>
-                Etude et réalisation d'outils spécifiques à vos besoins (Software - Hardware)
+                {% trans "Etude et réalisation d'outils spécifiques à vos besoins (Software - Hardware)" %}
               </li>
             </ul>
           </div>
@@ -264,7 +265,7 @@
       <div class="container">
 
         <div class="section-title">
-          <h2>Références et partenaires</h2>
+          <h2>{% trans "Références et partenaires" %}</h2>
 
         <div class="clients-slider swiper-container">
           <div class="swiper-wrapper align-items-center">
@@ -299,7 +300,7 @@
 
         <div class="section-title">
           <h2>Contact</h2>
-          <p>Nous sommes ouverts à vos questions.</p>
+          <p>{% trans "Nous sommes ouverts à vos questions." %}</p>
         </div>
 
         <div class="row">
@@ -308,8 +309,8 @@
             <div class="info">
               <div class="address">
                 <i class="bi bi-geo-alt"></i>
-                <h4>Localisation:</h4>
-                <p>Rue Principale 24 B, L-8820 Holtz</p>
+                <h4>{% trans "Localisation:" %}</h4>
+                <p>{% trans "Rue Principale 24 B, L-8820 Holtz" %}</p>
               </div>
 
               <div class="email">
@@ -328,20 +329,20 @@
               {% csrf_token %}
               <div class="row">
                 <div class="form-group col-md-6">
-                  <label for="nom">Nom</label>
+                  <label for="nom">{% trans "Nom" %}</label>
                   <input type="text" name="nom" class="form-control" id="nom" required>
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="prenom">Prénom</label>
+                  <label for="prenom">{% trans "Prénom" %}</label>
                   <input type="text" name="prenom" class="form-control" id="prenom" required>
                 </div>
                 <div class="form-group mt-3">
-                  <label for="adr_email">Adresse email</label>
+                  <label for="adr_email">{% trans "Adresse email" %}</label>
                   <input type="email" class="form-control" name="adr_email" id="adr_email" placeholder="exemple@exemple.com" required>
                 </div>
               </div>
               <div class="form-group mt-3">
-                <label for="mail_subject">Sujet</label>
+                <label for="mail_subject">{% trans "Sujet" %}</label>
                 <input type="text" class="form-control" name="mail_subject" id="mail_subject" required>
               </div>
               <div class="form-group mt-3">
@@ -352,7 +353,7 @@
                 <div class="g-recaptcha" data-sitekey="6LensC0eAAAAACgGQlxK2ScG3gDWk4nJhkK59H0v"></div>
               </div>
               <div class="text-center">
-                <button type="submit" name="submitContact">Envoyer</button>
+                <button type="submit" name="submitContact">{% trans "Envoyer" %}</button>
               </div>
             </form>
           </div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Resultat,
+    #Resultat,
     CustomUser,
     Integrateur,
     Employe,
@@ -40,6 +40,7 @@ class CustomUserAdmin(DjangoUserAdmin):
                     "password2",
                     "tel",
                     "entreprise",
+                    "a_contacter",
                     "is_active",
                     "is_staff",
                     "groups",
@@ -58,13 +59,15 @@ class CustomUserAdmin(DjangoUserAdmin):
         "is_staff",
         "created_date",
         "created_by",
-        "modified_date"
+        "modified_date",
+        "a_contacter"
     )  #
     list_filter = (
         "entreprise",
         "groups",
         "is_staff",
         "date_joined",
+        "a_contacter"
     )
     search_fields = (
         "email",
@@ -499,8 +502,8 @@ class ContratAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(Resultat)
-class ResultatAdmin(admin.ModelAdmin):
+#@admin.register(Resultat)
+#class ResultatAdmin(admin.ModelAdmin):
     """ list_display = ["get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
     #ACTIVER APRES + ne surtout pas laisser le champ "utilisateur" utilisable
     readonly_fields = ["utilisateur", "get_nom", "get_email", "get_tel", "get_entreprise", "nb_h_tot_prest_ann", "nb_h_tot_prest_ann", "utilisation_inutile", "date"]
